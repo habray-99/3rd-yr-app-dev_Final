@@ -15,7 +15,8 @@ namespace WebApplication6.Models
         public DateTime CreatedDate { get; set; }
         [Required]
         public string? UserID { get; set; }
-        public string? ImagePath { get; set; }
+        //public string? ImagePath { get; set; }
+        public byte[]? ProfilePicture { get; set; }
         //[ForeignKey("UserID")]
         public virtual CustomUser? User { get; set; }
 

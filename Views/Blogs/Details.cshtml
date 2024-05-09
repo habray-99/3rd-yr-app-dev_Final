@@ -102,7 +102,14 @@
         </div>
         <div class="dropdown-divider"></div>
         <br />
-        <img src="https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg" alt="User Profile Image" />
+        @if (Model.ProfilePicture != null && Model.ProfilePicture.Length > 0)
+        {
+            <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" />
+        }
+        else
+        {
+            <p>No profile picture available</p>
+        }
         <p>
             @Model.Body
         </p>

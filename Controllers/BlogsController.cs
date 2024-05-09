@@ -128,22 +128,56 @@ namespace WebApplication6.Controllers
         // POST: Blogs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("BlogID,Title,Body,UserID,ImagePath")] Blog blog)
+        //{
+        //    blog.CreatedDate = DateTime.Now;
+        //    blog.UserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Set the CreatedDate property to the current date
+        //        blog.CreatedDate = DateTime.Now;
+
+        //        _context.Add(blog);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
+        //    return View(blog);
+        //}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BlogID,Title,Body,UserID,ImagePath")] Blog blog)
+        public async Task<IActionResult> Create([Bind("BlogID,Title,Body,UserID")] Blog blog, IFormFile ProfilePictureUpload)
         {
             blog.CreatedDate = DateTime.Now;
             blog.UserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (ModelState.IsValid)
             {
-                // Set the CreatedDate property to the current date
-                blog.CreatedDate = DateTime.Now;
+                if (ProfilePictureUpload != null && ProfilePictureUpload.Length > 0)
+                {
+                    // Check the file size (in bytes)
+                    const int maxFileSize = 3 * 1024 * 1024; // 3 MB
+                    if (ProfilePictureUpload.Length > maxFileSize)
+                    {
+                        ModelState.AddModelError("ProfilePictureUpload", "The profile picture must be 3 MB or smaller.");
+                        return View(blog);
+                    }
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await ProfilePictureUpload.CopyToAsync(memoryStream);
+                        blog.ProfilePicture = memoryStream.ToArray();
+                    }
+                }
 
                 _context.Add(blog);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
+
             return View(blog);
         }
 

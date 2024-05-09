@@ -40,7 +40,7 @@ public static class BlogEndpoints
                     .SetProperty(m => m.Body, blog.Body)
                     .SetProperty(m => m.CreatedDate, blog.CreatedDate)
                     .SetProperty(m => m.UserID, blog.UserID)
-                    .SetProperty(m => m.ImagePath, blog.ImagePath)
+                    //.SetProperty(m => m.ImagePath, blog.ImagePath)
                     );
             return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
         })
