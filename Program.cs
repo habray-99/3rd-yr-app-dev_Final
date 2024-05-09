@@ -84,7 +84,7 @@ public class Program
 
         app.MapControllerRoute(
             "default",
-            "{controller=Home}/{action=Index}/{id?}");
+            "{controller=Blogs}/{action=Index}/{id?}");
 
         app.MapRazorPages();
 

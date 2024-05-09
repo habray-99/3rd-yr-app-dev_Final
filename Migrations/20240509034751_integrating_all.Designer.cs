@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication6.Areas.Identity.Data;
 
@@ -11,9 +12,11 @@ using WebApplication6.Areas.Identity.Data;
 namespace WebApplication6.Migrations
 {
     [DbContext(typeof(IdentityDBContext))]
-    partial class IdentityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240509034751_integrating_all")]
+    partial class integrating_all
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,7 +313,8 @@ namespace WebApplication6.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentID"));
 
-                    b.Property<int>("BlogID")
+                    b.Property<int?>("BlogID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("CommentText")
@@ -340,13 +344,14 @@ namespace WebApplication6.Migrations
 
             modelBuilder.Entity("WebApplication6.Models.CommentReaction", b =>
                 {
-                    b.Property<int>("CommentReactionID")
+                    b.Property<int?>("CommentReactionID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentReactionID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CommentReactionID"));
 
-                    b.Property<int>("CommentID")
+                    b.Property<int?>("CommentID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("CustomUserId")
@@ -418,9 +423,6 @@ namespace WebApplication6.Migrations
 
                     b.Property<int>("BlogID")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("CustomUserId")
                         .HasColumnType("nvarchar(450)");

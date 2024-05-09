@@ -9,7 +9,7 @@ namespace WebApplication6.Models
         [Key]
         public int CommentID { get; set; }
         [Required]
-        public int? BlogID { get; set; }
+        public int BlogID { get; set; }
         [Required]
         public string? UserID { get; set; }
         [Required]

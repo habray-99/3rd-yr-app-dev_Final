@@ -19,5 +19,7 @@ namespace WebApplication6.Models
         public virtual CustomUser? User { get; set; }
         //[ForeignKey("ReactionTypeID")]
         public virtual ReactionType? ReactionType { get; set; }
+
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
     }
 }

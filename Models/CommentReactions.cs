@@ -7,9 +7,9 @@ namespace WebApplication6.Models
     public class CommentReaction
     {
         [Key]
-        public int? CommentReactionID { get; set; }
+        public int CommentReactionID { get; set; }
         [Required]
-        public int? CommentID { get; set; }
+        public int CommentID { get; set; }
         [Required]
         public string? UserID { get; set; }
         [Required]

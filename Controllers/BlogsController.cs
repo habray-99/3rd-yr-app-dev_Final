@@ -31,22 +31,44 @@ namespace WebApplication6.Controllers
 
             ViewData["ReactionCounts"] = reactionCounts;
 
+            var commentReactionCounts = await GetCommentReactionCounts();
+            ViewData["CommentReactionCounts"] = commentReactionCounts;
+
+
 
             //var myDbContext = _context.Blogs.Include(b => b.User);
             return View(await myDbContext.ToListAsync());
         }
 
         // GET: Blogs/Details/5
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    //fetching comments
+        //    var comments = await _context.Comments
+        //.Include(c => c.User)
+        //.Where(c => c.BlogID == id)
+        //.ToListAsync();
+
+        //    ViewBag.Comments = comments;
+
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var blog = await _context.Blogs
+        //        .Include(b => b.User)
+        //        .FirstOrDefaultAsync(m => m.BlogID == id);
+        //    if (blog == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(blog);
+        //}
+
         public async Task<IActionResult> Details(int? id)
         {
-            //fetching comments
-            var comments = await _context.Comments
-        .Include(c => c.User)
-        .Where(c => c.BlogID == id)
-        .ToListAsync();
-
-            ViewBag.Comments = comments;
-
             if (id == null)
             {
                 return NotFound();
@@ -60,8 +82,21 @@ namespace WebApplication6.Controllers
                 return NotFound();
             }
 
+            // Fetching comments
+            var comments = await _context.Comments
+                .Include(c => c.User)
+                .Where(c => c.BlogID == id)
+                .ToListAsync();
+
+            ViewBag.Comments = comments;
+
+            // Fetching comment vote counts
+            var commentReactionCounts = await GetCommentReactionCounts();
+            ViewData["CommentReactionCounts"] = commentReactionCounts;
+
             return View(blog);
         }
+
 
         // GET: Blogs/Create
         public IActionResult Create()
@@ -213,5 +248,34 @@ namespace WebApplication6.Controllers
 
             return reactionCounts;
         }
+
+        private async Task<Dictionary<int, (int upvotes, int downvotes)>> GetCommentReactionCounts()
+        {
+            var reactionCounts = new Dictionary<int, (int upvotes, int downvotes)>();
+
+            var upvoteReactionTypeId = _context.ReactionTypes.FirstOrDefault(rt => rt.ReactionName == "Up Vote")?.ReactionTypeID;
+            var downvoteReactionTypeId = _context.ReactionTypes.FirstOrDefault(rt => rt.ReactionName == "Down Vote")?.ReactionTypeID;
+
+            if (upvoteReactionTypeId != null && downvoteReactionTypeId != null)
+            {
+                var upvotes = await _context.CommentReactions
+                    .Where(r => r.ReactionTypeID == upvoteReactionTypeId)
+                    .GroupBy(r => r.CommentID)
+                    .ToDictionaryAsync(g => g.Key, g => g.Count());
+
+                var downvotes = await _context.CommentReactions
+                    .Where(r => r.ReactionTypeID == downvoteReactionTypeId)
+                    .GroupBy(r => r.CommentID)
+                    .ToDictionaryAsync(g => g.Key, g => g.Count());
+
+                foreach (var commentId in upvotes.Keys.Union(downvotes.Keys))
+                {
+                    reactionCounts[commentId] = (upvotes.GetValueOrDefault(commentId, 0), downvotes.GetValueOrDefault(commentId, 0));
+                }
+            }
+
+            return reactionCounts;
+        }
+
     }
 }
