@@ -97,6 +97,7 @@ namespace WebApplication6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CommentID,BlogID,UserID,CommentText,CreatedDate")] Comment comment)
         {
+            comment.CreatedDate = DateTime.Now;
             if (id != comment.CommentID)
             {
                 return NotFound();
@@ -120,7 +121,9 @@ namespace WebApplication6.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Blogs", new { id = comment.BlogID });
+
             }
             ViewData["BlogID"] = new SelectList(_context.Blogs, "BlogID", "Body", comment.BlogID);
             ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", comment.UserID);

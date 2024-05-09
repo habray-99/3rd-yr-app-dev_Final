@@ -215,7 +215,8 @@
                                 } *@
                             </div>
                             <div class="d-flex flex-column ms-3">
-                                <small class="text mb-2" style="font-weight:bold">@commenterName</small>
+                                <small class="text" style="font-weight:bold">@commenterName</small>
+                                <small class="text mb-2" style="color:grey">@comment.CreatedDate</small>
                                 <small class="text">@comment.CommentText</small>
 
                                 <form asp-controller="CommentReactions" asp-action="CreateCommentReaction" method="post">
@@ -234,14 +235,19 @@
                                     </div>
                                 </form>
 
-                                <div class="d-flex flex-row me-2">
-                                    <div class="Edit me-3 ms-3">
-                                        <a asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.CommentID">Edit</a>
+                                @if (comment.User?.UserName == user.UserName)
+                                {
+                                    <div class="d-flex flex-row me-2">
+                                        <div class="Edit me-3 ms-3">
+                                            <a asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.CommentID">Edit</a>
+                                        </div>
+                                        <div class="Delete">
+                                            <a asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentID">Delete</a>
+                                        </div>
                                     </div>
-                                    <div class="Delete">
-                                        <a asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentID">Delete</a>
-                                    </div>
-                                </div>
+                                }
+
+                                
                             </div>
                         </div>
                     </div>
