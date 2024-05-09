@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using WebApplication6.Areas.Identity.Data;
 using WebApplication6.Models;
 
@@ -48,6 +49,63 @@ namespace WebApplication6.Controllers
             //var myDbContext = _context.Blogs.Include(b => b.User);
             return View(await myDbContext.ToListAsync());
         }
+
+
+        ///
+        //public async Task<IActionResult> Index(string filterOption)
+        //{
+        //    var myDbContext = _context.Blogs.Include(b => b.User).Include(b => b.Comments);
+        //    var blogs = await myDbContext.ToListAsync();
+        //    var reactionCounts = await GetReactionCounts();
+
+        //    ViewData["ReactionCounts"] = reactionCounts;
+        //    ViewData["CommentReactionCounts"] = await GetCommentReactionCounts();
+
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userReactions = await _context.Reactions
+        //        .Where(r => r.UserID == userId)
+        //        .ToListAsync();
+
+        //    ViewBag.BlogReactions = userReactions;
+
+        //    switch (filterOption)
+        //    {
+        //        case "popular":
+        //            blogs = blogs.OrderByDescending(b => CalculateBlogPopularity(b, reactionCounts)).ToList();
+        //            break;
+        //        case "random":
+        //            blogs = blogs.OrderBy(b => Guid.NewGuid()).ToList();
+        //            break;
+        //        case "recency":
+        //            blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+        //            break;
+        //        default:
+        //            // Default to recency if no valid filter option is provided
+        //            blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+        //            break;
+        //    }
+
+        //    ViewBag.FilterOption = filterOption;
+
+        //    return View(blogs);
+        //}
+
+        //private int CalculateBlogPopularity(Blog blog, Dictionary<int, (int upvotes, int downvotes)> reactionCounts)
+        //{
+        //    int upvoteWeightage = 2;
+        //    int downvoteWeightage = -1;
+        //    int commentWeightage = 1;
+
+        //    int upvotes = reactionCounts.GetValueOrDefault(blog.BlogID, (0, 0)).upvotes;
+        //    int downvotes = reactionCounts.GetValueOrDefault(blog.BlogID, (0, 0)).downvotes;
+        //    int comments = blog.Comments.Count;
+
+        //    int popularity = upvoteWeightage * upvotes + downvoteWeightage * downvotes + commentWeightage * comments;
+
+        //    return popularity;
+        //}
+        ///
+
 
         // GET: Blogs/Details/5
         //public async Task<IActionResult> Details(int? id)
@@ -204,18 +262,39 @@ namespace WebApplication6.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-
         //public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID")] Blog blog, IFormFile ProfilePictureUpload)
         //{
+
         //    if (id != blog.BlogID)
         //    {
         //        return NotFound();
         //    }
 
+        //    //blog.Body = BlogID;
+        //    //blog.Title = Title;
+
         //    if (ModelState.IsValid)
         //    {
         //        try
         //        {
+        //            if (ProfilePictureUpload != null && ProfilePictureUpload.Length > 0)
+        //            {
+        //                // Check the file size (in bytes)
+        //                const int maxFileSize = 3 * 1024 * 1024; // 3 MB
+        //                if (ProfilePictureUpload.Length > maxFileSize)
+        //                {
+        //                    ModelState.AddModelError("ProfilePictureUpload", "The profile picture must be 3 MB or smaller.");
+        //                    ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
+        //                    return View(blog);
+        //                }
+
+        //                using (var memoryStream = new MemoryStream())
+        //                {
+        //                    await ProfilePictureUpload.CopyToAsync(memoryStream);
+        //                    blog.BlogPicture = memoryStream.ToArray();
+        //                }
+        //            }
+
         //            _context.Update(blog);
         //            await _context.SaveChangesAsync();
         //        }
@@ -236,56 +315,41 @@ namespace WebApplication6.Controllers
         //    return View(blog);
         //}
 
+
+
+        ////works
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID")] Blog blog, IFormFile ProfilePictureUpload)
+        public async Task<IActionResult> Edit(int id, string title, string body, IFormFile blogPictureUpload)
         {
-            if (id != blog.BlogID)
+            // Retrieve the existing blog post from the database
+            var blog = await _context.Blogs.FindAsync(id);
+
+            if (blog == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // Update the properties of the blog post
+            blog.Title = title;
+            blog.Body = body;
+
+            if (blogPictureUpload != null && blogPictureUpload.Length > 0)
             {
-                try
+                // Read the file contents and store them in the BlogPicture property
+                using (var memoryStream = new MemoryStream())
                 {
-                    if (ProfilePictureUpload != null && ProfilePictureUpload.Length > 0)
-                    {
-                        // Check the file size (in bytes)
-                        const int maxFileSize = 3 * 1024 * 1024; // 3 MB
-                        if (ProfilePictureUpload.Length > maxFileSize)
-                        {
-                            ModelState.AddModelError("ProfilePictureUpload", "The profile picture must be 3 MB or smaller.");
-                            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
-                            return View(blog);
-                        }
-
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await ProfilePictureUpload.CopyToAsync(memoryStream);
-                            blog.BlogPicture = memoryStream.ToArray();
-                        }
-                    }
-
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
+                    await blogPictureUpload.CopyToAsync(memoryStream);
+                    blog.BlogPicture = memoryStream.ToArray();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BlogExists(blog.BlogID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
-            return View(blog);
+
+            _context.Blogs.Update(blog);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
+
 
 
         // GET: Blogs/Delete/5

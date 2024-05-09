@@ -65,6 +65,19 @@
 
     <p class="text-start mb-4">What we have today for you?</p>
 
+    @* <div class="mb-3">
+        <form asp-action="Index" method="get">
+            <div class="form-group">
+                <label for="filterOption">Filter:</label>
+                <select name="filterOption" id="filterOption" class="form-control">
+                    <option value="popular" selected="@(ViewBag.FilterOption == "popular")">Popular Blogs</option>
+                    <option value="random" selected="@(ViewBag.FilterOption == "random")">Random</option>
+                    <option value="recency" selected="@(ViewBag.FilterOption == "recency")">Recency</option>
+            </div>
+            <button type="submit" class="btn btn-primary">Apply Filter</button>
+        </form>
+    </div> *@
+
 
     <div class="row">
         @foreach (var item in Model)
