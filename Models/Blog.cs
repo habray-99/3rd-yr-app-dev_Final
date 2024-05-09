@@ -16,7 +16,7 @@ namespace WebApplication6.Models
         [Required]
         public string? UserID { get; set; }
         //public string? ImagePath { get; set; }
-        public byte[]? ProfilePicture { get; set; }
+        public byte[]? BlogPicture { get; set; }
         //[ForeignKey("UserID")]
         public virtual CustomUser? User { get; set; }
 

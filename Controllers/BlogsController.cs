@@ -169,7 +169,7 @@ namespace WebApplication6.Controllers
                     using (var memoryStream = new MemoryStream())
                     {
                         await ProfilePictureUpload.CopyToAsync(memoryStream);
-                        blog.ProfilePicture = memoryStream.ToArray();
+                        blog.BlogPicture = memoryStream.ToArray();
                     }
                 }
 
@@ -202,9 +202,43 @@ namespace WebApplication6.Controllers
         // POST: Blogs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+
+        //public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID")] Blog blog, IFormFile ProfilePictureUpload)
+        //{
+        //    if (id != blog.BlogID)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(blog);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!BlogExists(blog.BlogID))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
+        //    return View(blog);
+        //}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID,ImagePath")] Blog blog)
+        public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID")] Blog blog, IFormFile ProfilePictureUpload)
         {
             if (id != blog.BlogID)
             {
@@ -215,6 +249,24 @@ namespace WebApplication6.Controllers
             {
                 try
                 {
+                    if (ProfilePictureUpload != null && ProfilePictureUpload.Length > 0)
+                    {
+                        // Check the file size (in bytes)
+                        const int maxFileSize = 3 * 1024 * 1024; // 3 MB
+                        if (ProfilePictureUpload.Length > maxFileSize)
+                        {
+                            ModelState.AddModelError("ProfilePictureUpload", "The profile picture must be 3 MB or smaller.");
+                            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
+                            return View(blog);
+                        }
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await ProfilePictureUpload.CopyToAsync(memoryStream);
+                            blog.BlogPicture = memoryStream.ToArray();
+                        }
+                    }
+
                     _context.Update(blog);
                     await _context.SaveChangesAsync();
                 }
@@ -234,6 +286,7 @@ namespace WebApplication6.Controllers
             ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
             return View(blog);
         }
+
 
         // GET: Blogs/Delete/5
         public async Task<IActionResult> Delete(int? id)
