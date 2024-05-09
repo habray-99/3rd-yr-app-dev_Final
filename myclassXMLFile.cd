@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WebApplication6.Controllers.BlogMetricsController" Collapsed="true">
+    <Position X="3.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAABBACAAAAAAAAAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\BlogMetricsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.BlogsController" Collapsed="true">
+    <Position X="5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEgAAAAAAABBACAAAAAAAAAAAEAAEACEAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\BlogsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.CommentReactionsController" Collapsed="true">
+    <Position X="6.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBACAAAAAAAAAAAEAAEACAAEAAAAABAA=</HashCode>
+      <FileName>Controllers\CommentReactionsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.CommentsController" Collapsed="true">
+    <Position X="8.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAABBACAAAAAAAAAAAEAAEACAAEAAAAAQAA=</HashCode>
+      <FileName>Controllers\CommentsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.HomeController" Collapsed="true">
+    <Position X="3.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAIAAAAQAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.NotificationsController" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBACAAAAAAAAAAAEQAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\NotificationsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.ReactionsController" Collapsed="true">
+    <Position X="6.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAABBACAAAAAAAAAQAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\ReactionsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.ReactionTypesController" Collapsed="true">
+    <Position X="8.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBACAAAAAAAAAAAEAAEACAAEAAABAAAA=</HashCode>
+      <FileName>Controllers\ReactionTypesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.UserMetricsController" Collapsed="true">
+    <Position X="3.25" Y="4.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAABBACAAAAAAAAAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\UserMetricsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApplication6.Controllers.UsersController" Collapsed="true">
+    <Position X="5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABBQCAAAAAAAAAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\UsersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
