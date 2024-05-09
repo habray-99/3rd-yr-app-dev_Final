@@ -1,11 +1,15 @@
 ﻿@model WebApplication6.Models.Blog
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using WebApplication6.Areas.Identity.Data
+@inject UserManager<CustomUser> UserManager
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var commentReactionCounts = ViewData["CommentReactionCounts"] as Dictionary<int, (int, int)>;
+    var user = await UserManager.GetUserAsync(User);
 
 
 }
@@ -93,7 +97,14 @@
         <h1>@Model.Title</h1>
         <div class="d-flex flex-row align-items-center mb-3 mt-5">
             <div class="profile-circle1 mb-2">
-                <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image">
+                @* <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image"> *@
+
+                @if (Model.User?.ProfilePicture != null)
+                {
+                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.User.ProfilePicture)" />
+                }
+                
+               
             </div>
             <div class="d-flex flex-column">
                 <h4 class="text" style="font-weight:bold">@Model.User.UserName</h4>
@@ -136,7 +147,11 @@
             <div class="d-flex flex-row align-items-center mb-3 ms-1">
 
                 <div class="profile-circle mb-2">
-                    <img src="https://t4.ftcdn.net/jpg/03/98/85/77/360_F_398857704_n44BPhqM68Xk9vT31BeFkLQwWsgeZS6C.jpg" alt="User Profile Image">
+                    @* <img src="https://t4.ftcdn.net/jpg/03/98/85/77/360_F_398857704_n44BPhqM68Xk9vT31BeFkLQwWsgeZS6C.jpg" alt="User Profile Image"> *@
+                    @if (user != null && user.ProfilePicture != null)
+                    {
+                        <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)"  />
+                    }
                 </div>
 
                 <div class="comment-box" style="width:100%">
@@ -161,6 +176,9 @@
             {
                 @foreach (var comment in ViewBag.Comments)
                 {
+                    var commenterProfilePicture = comment.User?.ProfilePicture;
+                    var commenterName = comment.User?.UserName;
+
                     var upvotes = 0;
                     var downvotes = 0;
                     var userReaction = 0; // 0 = no reaction, 1 = upvote, 2 = downvote
@@ -186,10 +204,18 @@
                         <div class="dropdown-divider"></div>
                         <div class="d-flex flex-row mb-3 mt-3">
                             <div class="profile-circle mb-2">
-                                <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image">
+                                @* <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image"> *@
+                                @if (commenterProfilePicture != null)
+                                {
+                                    <img src="data:image/png;base64,@Convert.ToBase64String(commenterProfilePicture)" />
+                                }
+                                @* @if (user != null && user.ProfilePicture != null)
+                                {
+                                    <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)" />
+                                } *@
                             </div>
                             <div class="d-flex flex-column ms-3">
-                                <small class="text mb-2" style="font-weight:bold">@Model.User.UserName</small>
+                                <small class="text mb-2" style="font-weight:bold">@commenterName</small>
                                 <small class="text">@comment.CommentText</small>
 
                                 <form asp-controller="CommentReactions" asp-action="CreateCommentReaction" method="post">
