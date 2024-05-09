@@ -12,8 +12,8 @@ using WebApplication6.Areas.Identity.Data;
 namespace WebApplication6.Migrations
 {
     [DbContext(typeof(IdentityDBContext))]
-    [Migration("20240509014321_1")]
-    partial class _1
+    [Migration("20240509090048_profile image edit test 1")]
+    partial class profileimageedittest1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,6 +178,9 @@ namespace WebApplication6.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -242,11 +245,14 @@ namespace WebApplication6.Migrations
 
             modelBuilder.Entity("WebApplication6.Models.Blog", b =>
                 {
-                    b.Property<int?>("BlogID")
+                    b.Property<int>("BlogID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("BlogID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BlogID"));
+
+                    b.Property<byte[]>("BlogPicture")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Body")
                         .IsRequired()
@@ -257,9 +263,6 @@ namespace WebApplication6.Migrations
 
                     b.Property<string>("CustomUserId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ImagePath")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -290,9 +293,6 @@ namespace WebApplication6.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<string>("CustomUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("TotalComments")
                         .HasColumnType("int");
 
@@ -306,21 +306,18 @@ namespace WebApplication6.Migrations
 
                     b.HasIndex("BlogID");
 
-                    b.HasIndex("CustomUserId");
-
-                    b.ToTable("BlogMetrics");
+                    b.ToTable("BlogMetric");
                 });
 
             modelBuilder.Entity("WebApplication6.Models.Comment", b =>
                 {
-                    b.Property<int?>("CommentID")
+                    b.Property<int>("CommentID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CommentID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentID"));
 
-                    b.Property<int?>("BlogID")
-                        .IsRequired()
+                    b.Property<int>("BlogID")
                         .HasColumnType("int");
 
                     b.Property<string>("CommentText")
@@ -350,14 +347,13 @@ namespace WebApplication6.Migrations
 
             modelBuilder.Entity("WebApplication6.Models.CommentReaction", b =>
                 {
-                    b.Property<int?>("CommentReactionID")
+                    b.Property<int>("CommentReactionID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CommentReactionID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentReactionID"));
 
-                    b.Property<int?>("CommentID")
-                        .IsRequired()
+                    b.Property<int>("CommentID")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomUserId")
@@ -427,9 +423,11 @@ namespace WebApplication6.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("ReactionID"));
 
-                    b.Property<int?>("BlogID")
-                        .IsRequired()
+                    b.Property<int>("BlogID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CustomUserId")
                         .HasColumnType("nvarchar(450)");
@@ -526,7 +524,7 @@ namespace WebApplication6.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("UserMetrics");
+                    b.ToTable("UserMetric");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -602,10 +600,6 @@ namespace WebApplication6.Migrations
                         .HasForeignKey("BlogID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("WebApplication6.Areas.Identity.Data.CustomUser", null)
-                        .WithMany("BlogMetrics")
-                        .HasForeignKey("CustomUserId");
 
                     b.Navigation("Blog");
                 });
@@ -723,8 +717,8 @@ namespace WebApplication6.Migrations
 
             modelBuilder.Entity("WebApplication6.Models.UserMetric", b =>
                 {
-                    b.HasOne("WebApplication6.Areas.Identity.Data.CustomUser", "User")
-                        .WithMany("UserMetrics")
+                    b.HasOne("WebApplication6.Models.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -734,8 +728,6 @@ namespace WebApplication6.Migrations
 
             modelBuilder.Entity("WebApplication6.Areas.Identity.Data.CustomUser", b =>
                 {
-                    b.Navigation("BlogMetrics");
-
                     b.Navigation("Blogs");
 
                     b.Navigation("CommentReactions");
@@ -745,8 +737,6 @@ namespace WebApplication6.Migrations
                     b.Navigation("Notifications");
 
                     b.Navigation("Reactions");
-
-                    b.Navigation("UserMetrics");
                 });
 
             modelBuilder.Entity("WebApplication6.Models.Blog", b =>

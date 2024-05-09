@@ -12,7 +12,9 @@ public class CustomUser : IdentityUser
     [ProtectedPersonalData]
     [MaxLength(30)]
     public string? Address { get; set; }
-    public string? ProfilePicture { get; set; }
+
+    [MaxLength(3 * 1024 * 1024)]
+    public byte[]? ProfilePicture { get; set; }
 
     public DateTime? CreatedDate { get; set; } = DateTime.Now;
     public ICollection<Blog>? Blogs { get; set; }

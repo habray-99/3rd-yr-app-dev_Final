@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApplication6.Migrations
 {
     /// <inheritdoc />
-    public partial class _1 : Migration
+    public partial class profileimageedittest1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +33,7 @@ namespace WebApplication6.Migrations
                     Role = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     ProfilePicture = table.Column<byte[]>(type: "varbinary(max)", maxLength: 3145728, nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -182,7 +183,7 @@ namespace WebApplication6.Migrations
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BlogPicture = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     CustomUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -251,30 +252,7 @@ namespace WebApplication6.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserMetrics",
-                columns: table => new
-                {
-                    UserMetricID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TotalBlogPosts = table.Column<int>(type: "int", nullable: false),
-                    TotalUpvotes = table.Column<int>(type: "int", nullable: false),
-                    TotalDownvotes = table.Column<int>(type: "int", nullable: false),
-                    TotalComments = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserMetrics", x => x.UserMetricID);
-                    table.ForeignKey(
-                        name: "FK_UserMetrics_AspNetUsers_UserID",
-                        column: x => x.UserID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BlogMetrics",
+                name: "BlogMetric",
                 columns: table => new
                 {
                     BlogMetricID = table.Column<int>(type: "int", nullable: false)
@@ -282,19 +260,13 @@ namespace WebApplication6.Migrations
                     BlogID = table.Column<int>(type: "int", nullable: false),
                     TotalUpvotes = table.Column<int>(type: "int", nullable: true),
                     TotalDownvotes = table.Column<int>(type: "int", nullable: true),
-                    TotalComments = table.Column<int>(type: "int", nullable: true),
-                    CustomUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    TotalComments = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlogMetrics", x => x.BlogMetricID);
+                    table.PrimaryKey("PK_BlogMetric", x => x.BlogMetricID);
                     table.ForeignKey(
-                        name: "FK_BlogMetrics_AspNetUsers_CustomUserId",
-                        column: x => x.CustomUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_BlogMetrics_Blogs_BlogID",
+                        name: "FK_BlogMetric_Blogs_BlogID",
                         column: x => x.BlogID,
                         principalTable: "Blogs",
                         principalColumn: "BlogID",
@@ -344,6 +316,7 @@ namespace WebApplication6.Migrations
                     BlogID = table.Column<int>(type: "int", nullable: false),
                     UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ReactionTypeID = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CustomUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -372,6 +345,29 @@ namespace WebApplication6.Migrations
                         principalTable: "ReactionTypes",
                         principalColumn: "ReactionTypeID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserMetric",
+                columns: table => new
+                {
+                    UserMetricID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TotalBlogPosts = table.Column<int>(type: "int", nullable: false),
+                    TotalUpvotes = table.Column<int>(type: "int", nullable: false),
+                    TotalDownvotes = table.Column<int>(type: "int", nullable: false),
+                    TotalComments = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMetric", x => x.UserMetricID);
+                    table.ForeignKey(
+                        name: "FK_UserMetric_CustomUser_UserID",
+                        column: x => x.UserID,
+                        principalTable: "CustomUser",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -453,14 +449,9 @@ namespace WebApplication6.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogMetrics_BlogID",
-                table: "BlogMetrics",
+                name: "IX_BlogMetric_BlogID",
+                table: "BlogMetric",
                 column: "BlogID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BlogMetrics_CustomUserId",
-                table: "BlogMetrics",
-                column: "CustomUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Blogs_CustomUserId",
@@ -538,8 +529,8 @@ namespace WebApplication6.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserMetrics_UserID",
-                table: "UserMetrics",
+                name: "IX_UserMetric_UserID",
+                table: "UserMetric",
                 column: "UserID");
         }
 
@@ -562,13 +553,10 @@ namespace WebApplication6.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BlogMetrics");
+                name: "BlogMetric");
 
             migrationBuilder.DropTable(
                 name: "CommentReactions");
-
-            migrationBuilder.DropTable(
-                name: "CustomUser");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
@@ -577,7 +565,7 @@ namespace WebApplication6.Migrations
                 name: "Reactions");
 
             migrationBuilder.DropTable(
-                name: "UserMetrics");
+                name: "UserMetric");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -587,6 +575,9 @@ namespace WebApplication6.Migrations
 
             migrationBuilder.DropTable(
                 name: "ReactionTypes");
+
+            migrationBuilder.DropTable(
+                name: "CustomUser");
 
             migrationBuilder.DropTable(
                 name: "Blogs");

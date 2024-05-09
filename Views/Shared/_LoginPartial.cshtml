@@ -4,6 +4,11 @@
 
 @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
 <style>
     .profile-picture {
         width: 40px;
@@ -31,11 +36,12 @@
                 {
                     <span>Hello @UserManager.GetUserName(User)!</span>
                 } *@
-                <img src="https://images.unsplash.com/photo-1714505026042-eee1eaa0b17f?q=80&w=1806&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile Picture" class="profile-picture" />
-                @* @if (Model.ProfilePicture != null && Model.ProfilePicture.Length > 0)
+                @* <img src="https://images.unsplash.com/photo-1714505026042-eee1eaa0b17f?q=80&w=1806&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile Picture" class="profile-picture" /> *@
+                @if (user != null && user.ProfilePicture != null)
                 {
-                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" />
-                } *@
+                    <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)" class="profile-picture" />
+                }
+
             </a>
         </li>
         <li class="nav-item">
