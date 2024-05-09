@@ -21,5 +21,6 @@ namespace WebApplication6.Models
         public virtual CustomUser? User { get; set; }
 
         public ICollection<Comment>? Comments { get; set; }
+        public ICollection<Reaction>? Reactions { get; set; }
     }
 }
