@@ -67,10 +67,22 @@
         {
             var upvotes = 0;
             var downvotes = 0;
+            var userReaction = 0;
             if (reactionCounts != null && reactionCounts.ContainsKey(item.BlogID))
             {
                 upvotes = reactionCounts[item.BlogID].Item1;
                 downvotes = reactionCounts[item.BlogID].Item2;
+            }
+
+            if (ViewBag.BlogReactions != null)
+            {
+                var userCommentReaction = ((List<WebApplication6.Models.Reaction>)ViewBag.BlogReactions)
+                .FirstOrDefault(r => r.BlogID == item.BlogID)?.ReactionTypeID;
+
+                if (userCommentReaction.HasValue)
+                {
+                    userReaction = userCommentReaction.Value;
+                }
             }
 
             <div class="card mb-3">
@@ -89,11 +101,11 @@
 
                                 <div class="vote-icons">
                                     <button type="submit" class="btn btn-link" name="ReactionTypeID" value="1">
-                                        <i class="fa-solid fa-circle-arrow-up"></i>
+                                        <i class="fa-solid fa-circle-arrow-up @(userReaction == 1 ? "text-primary" : "")"></i>
                                         <span>@upvotes</span> <!-- Use the actual upvote count -->
                                     </button>
                                     <button type="submit" class="btn btn-link" name="ReactionTypeID" value="2">
-                                        <i class="fa-solid fa-circle-arrow-down"></i>
+                                        <i class="fa-solid fa-circle-arrow-down @(userReaction == 2 ? "text-danger" : "")"></i>
                                         <span>@downvotes</span> <!-- Use the actual downvote count -->
                                     </button>
                                 </div>

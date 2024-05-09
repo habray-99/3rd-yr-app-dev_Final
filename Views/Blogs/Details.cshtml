@@ -4,8 +4,9 @@
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
+
     var commentReactionCounts = ViewData["CommentReactionCounts"] as Dictionary<int, (int, int)>;
+
 
 }
 
@@ -138,26 +139,36 @@
                     </form>
                 </div>
 
-
-
-
-
-
             </div>
+            <h4>Comments</h4>
+            
+
             @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
             {
-
                 @foreach (var comment in ViewBag.Comments)
                 {
                     var upvotes = 0;
                     var downvotes = 0;
+                    var userReaction = 0; // 0 = no reaction, 1 = upvote, 2 = downvote
+
                     if (commentReactionCounts != null && commentReactionCounts.ContainsKey(comment.CommentID))
                     {
                         upvotes = commentReactionCounts[comment.CommentID].Item1;
                         downvotes = commentReactionCounts[comment.CommentID].Item2;
                     }
+
+                    if (ViewBag.UserReactions != null)
+                    {
+                        var userCommentReaction = ((List<WebApplication6.Models.CommentReaction>)ViewBag.UserReactions)
+                        .FirstOrDefault(r => r.CommentID == comment.CommentID)?.ReactionTypeID;
+
+                        if (userCommentReaction.HasValue)
+                        {
+                            userReaction = userCommentReaction.Value;
+                        }
+                    }
+
                     <div class="ms-2 mt-4">
-                        <h4>Comments</h4>
                         <div class="dropdown-divider"></div>
                         <div class="d-flex flex-row mb-3 mt-3">
                             <div class="profile-circle mb-2">
@@ -173,29 +184,15 @@
 
                                     <div class="vote-icons d-flex flex-row">
                                         <button type="submit" class="btn btn-link" name="ReactionTypeID" value="1">
-                                            <i class="fa-solid fa-circle-arrow-up"></i>
+                                            <i class="fa-solid fa-circle-arrow-up @(userReaction == 1 ? "text-primary" : "")"></i>
                                             <span>@upvotes</span>
                                         </button>
                                         <button type="submit" class="btn btn-link" name="ReactionTypeID" value="2">
-                                            <i class="fa-solid fa-circle-arrow-down"></i>
+                                            <i class="fa-solid fa-circle-arrow-down @(userReaction == 2 ? "text-danger" : "")"></i>
                                             <span>@downvotes</span>
                                         </button>
                                     </div>
-
                                 </form>
-
-                                @* <div class="d-flex flex-row mt-2">
-                                    <div class="vote-icons d-flex flex-row">
-                                        <div class="upvote">
-                                            <i class="fa-solid fa-circle-arrow-up"></i>
-                                            <span>@upvotes</span>
-                                        </div>
-                                        <div class="downvote">
-                                            <i class="fa-solid fa-circle-arrow-down"></i>
-                                            <span>@downvotes</span>
-                                        </div>
-                                    </div>
-                                </div> *@
 
                                 <div class="d-flex flex-row me-2">
                                     <div class="Edit me-3 ms-3">
@@ -205,74 +202,12 @@
                                         <a asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentID">Delete</a>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 }
             }
-            else
-            {
-                <div class="col-md-6 mb-3" style="width:100%;">
-
-                    <br />
-
-                    <div class="ms-2 mt-4">
-                        <h4>No comments available</h4>
-                    </div>
-                </div>
-            }
 
         </div>
     </div>
 </body>
-
-@* @model WebApplication6.Models.Blog
-
-@{
-    ViewData["Title"] = "Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>Blog</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Body)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Body)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImagePath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImagePath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.BlogID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div> *@

@@ -35,6 +35,15 @@ namespace WebApplication6.Controllers
             ViewData["CommentReactionCounts"] = commentReactionCounts;
 
 
+            ////
+            // Fetch the user's comment reactions
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userReactions = await _context.Reactions
+                .Where(r => r.UserID == userId)
+                .ToListAsync();
+
+            ViewBag.BlogReactions = userReactions;
+            ///
 
             //var myDbContext = _context.Blogs.Include(b => b.User);
             return View(await myDbContext.ToListAsync());
@@ -93,6 +102,17 @@ namespace WebApplication6.Controllers
             // Fetching comment vote counts
             var commentReactionCounts = await GetCommentReactionCounts();
             ViewData["CommentReactionCounts"] = commentReactionCounts;
+
+            // Fetch the user's comment reactions
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userReactions = await _context.CommentReactions
+                .Where(r => r.UserID == userId)
+                .ToListAsync();
+
+            ViewBag.UserReactions = userReactions;
+
+
+
 
             return View(blog);
         }
