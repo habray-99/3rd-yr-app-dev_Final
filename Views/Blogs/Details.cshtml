@@ -167,7 +167,7 @@
                                 <small class="text mb-2" style="font-weight:bold">@Model.User.UserName</small>
                                 <small class="text">@comment.CommentText</small>
 
-                                <form asp-controller="Reactions" asp-action="Create" method="post">
+                                <form asp-controller="CommentReactions" asp-action="CreateCommentReaction" method="post">
                                     <input type="hidden" name="CommentID" value="@comment.CommentID" />
                                     <input type="hidden" name="UserID" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
 

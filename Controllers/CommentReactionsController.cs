@@ -173,6 +173,46 @@ namespace WebApplication6.Controllers
             return _context.CommentReactions.Any(e => e.CommentReactionID == id);
         }
 
-        
+        //my custom create comment reaction
+        public async Task<IActionResult> CreateCommentReaction([Bind("CommentID,UserID,ReactionTypeID")] CommentReaction newReaction)
+        {
+            if (string.IsNullOrEmpty(newReaction.UserID))
+            {
+                // Redirect the user to the login page
+                string script = "<script>alert('You need to be logged in to perform this action.');</script>";
+                return Content(script, "text/html");
+            }
+
+            // Get the existing reaction for the current user, comment, and reaction type
+            var existingReaction = await _context.CommentReactions
+                .FirstOrDefaultAsync(r => r.CommentID == newReaction.CommentID && r.UserID == newReaction.UserID && r.ReactionTypeID == newReaction.ReactionTypeID);
+
+            if (existingReaction == null)
+            {
+                // Remove any existing reactions for the current user and comment
+                var existingReactions = await _context.CommentReactions
+                    .Where(r => r.CommentID == newReaction.CommentID && r.UserID == newReaction.UserID)
+                    .ToListAsync();
+                _context.CommentReactions.RemoveRange(existingReactions);
+
+
+                // Add the new reaction
+                _context.CommentReactions.Add(newReaction);
+            }
+            else
+            {
+                // Remove the existing reaction
+                _context.CommentReactions.Remove(existingReaction);
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Redirect back to the details page for the comment's blog
+            var comment = await _context.Comments.FindAsync(newReaction.CommentID);
+            return RedirectToAction("Details", "Blogs", new { id = comment.BlogID });
+        }
+
+
+
     }
 }

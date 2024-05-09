@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication6.Areas.Identity.Data;
 
@@ -11,9 +12,11 @@ using WebApplication6.Areas.Identity.Data;
 namespace WebApplication6.Migrations
 {
     [DbContext(typeof(IdentityDBContext))]
-    partial class IdentityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240509053430_aded_created_date_for_customuser")]
+    partial class aded_created_date_for_customuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

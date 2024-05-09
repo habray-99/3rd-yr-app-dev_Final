@@ -13,6 +13,8 @@ public class CustomUser : IdentityUser
     [MaxLength(30)]
     public string? Address { get; set; }
     public string? ProfilePicture { get; set; }
+
+    public DateTime? CreatedDate { get; set; } = DateTime.Now;
     public ICollection<Blog>? Blogs { get; set; }
     public ICollection<Comment>? Comments { get; set; }
     public ICollection<Reaction>? Reactions { get; set; }
