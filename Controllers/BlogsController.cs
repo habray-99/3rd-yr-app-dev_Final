@@ -51,37 +51,38 @@ namespace WebApplication6.Controllers
         //}
 
 
-        public async Task<IActionResult> Index(int? page)
-        {
-            int pageSize = 5; // Number of items per page
-            int pageNumber = page ?? 1; // Use the provided page number or default to 1
 
-            var myDbContext = _context.Blogs.Include(b => b.User);
-            var blogs = await myDbContext.ToListAsync();
+        //works only for pagination
+        //public async Task<IActionResult> Index(int? page)
+        //{
+        //    int pageSize = 5; // Number of items per page
+        //    int pageNumber = page ?? 1; // Use the provided page number or default to 1
 
-            // Calculate total number of pages
-            int pageCount = (int)Math.Ceiling(blogs.Count / (double)pageSize);
+        //    var myDbContext = _context.Blogs.Include(b => b.User);
+        //    var blogs = await myDbContext.ToListAsync();
 
-            // Ensure the page number is within the valid range
-            pageNumber = Math.Max(1, Math.Min(pageNumber, pageCount));
+        //    // Calculate total number of pages
+        //    int pageCount = (int)Math.Ceiling(blogs.Count / (double)pageSize);
 
-            // Skip items based on the current page and take 'pageSize' items
-            var paginatedBlogs = blogs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+        //    // Ensure the page number is within the valid range
+        //    pageNumber = Math.Max(1, Math.Min(pageNumber, pageCount));
 
-            // Set ViewBag values
-            ViewBag.PageCount = pageCount;
-            ViewBag.PageNumber = pageNumber;
+        //    // Skip items based on the current page and take 'pageSize' items
+        //    var paginatedBlogs = blogs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-            return View(paginatedBlogs);
-        }
+        //    // Set ViewBag values
+        //    ViewBag.PageCount = pageCount;
+        //    ViewBag.PageNumber = pageNumber;
+
+        //    return View(paginatedBlogs);
+        //}
 
 
 
-
-        ///
+        //works only for filter
         //public async Task<IActionResult> Index(string filterOption)
         //{
-        //    var myDbContext = _context.Blogs.Include(b => b.User).Include(b => b.Comments);
+        //    var myDbContext = _context.Blogs.Include(b => b.User);
         //    var blogs = await myDbContext.ToListAsync();
         //    var reactionCounts = await GetReactionCounts();
 
@@ -98,7 +99,7 @@ namespace WebApplication6.Controllers
         //    switch (filterOption)
         //    {
         //        case "popular":
-        //            blogs = blogs.OrderByDescending(b => CalculateBlogPopularity(b, reactionCounts)).ToList();
+        //            blogs = blogs.OrderByDescending(b => (reactionCounts.ContainsKey(b.BlogID) ? reactionCounts[b.BlogID].upvotes - reactionCounts[b.BlogID].downvotes : 0)).ToList();
         //            break;
         //        case "random":
         //            blogs = blogs.OrderBy(b => Guid.NewGuid()).ToList();
@@ -117,49 +118,67 @@ namespace WebApplication6.Controllers
         //    return View(blogs);
         //}
 
-        //private int CalculateBlogPopularity(Blog blog, Dictionary<int, (int upvotes, int downvotes)> reactionCounts)
-        //{
-        //    int upvoteWeightage = 2;
-        //    int downvoteWeightage = -1;
-        //    int commentWeightage = 1;
 
-        //    int upvotes = reactionCounts.GetValueOrDefault(blog.BlogID, (0, 0)).upvotes;
-        //    int downvotes = reactionCounts.GetValueOrDefault(blog.BlogID, (0, 0)).downvotes;
-        //    int comments = blog.Comments.Count;
+        public async Task<IActionResult> Index(string filterOption, int? page)
+        {
+            int pageSize = 5; // Number of items per page
+            int pageNumber = page ?? 1; // Use the provided page number or default to 1
 
-        //    int popularity = upvoteWeightage * upvotes + downvoteWeightage * downvotes + commentWeightage * comments;
+            var myDbContext = _context.Blogs.Include(b => b.User);
+            var blogs = await myDbContext.ToListAsync();
+            var reactionCounts = await GetReactionCounts();
 
-        //    return popularity;
-        //}
-        ///
+            ViewData["ReactionCounts"] = reactionCounts;
+            ViewData["CommentReactionCounts"] = await GetCommentReactionCounts();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userReactions = await _context.Reactions
+                .Where(r => r.UserID == userId)
+                .ToListAsync();
+
+            ViewBag.BlogReactions = userReactions;
+
+            switch (filterOption)
+            {
+                case "popular":
+                    blogs = blogs.OrderByDescending(b => (reactionCounts.ContainsKey(b.BlogID) ? reactionCounts[b.BlogID].upvotes - reactionCounts[b.BlogID].downvotes : 0)).ToList();
+                    break;
+                case "random":
+                    blogs = blogs.OrderBy(b => Guid.NewGuid()).ToList();
+                    break;
+                case "recency":
+                    blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+                    break;
+                default:
+                    // Default to recency if no valid filter option is provided
+                    blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+                    break;
+            }
+
+            ViewBag.FilterOption = filterOption;
+
+            // Calculate total number of pages
+            int pageCount = (int)Math.Ceiling(blogs.Count / (double)pageSize);
+
+            // Ensure the page number is within the valid range
+            pageNumber = Math.Max(1, Math.Min(pageNumber, pageCount));
+
+            // Skip items based on the current page and take 'pageSize' items
+            var paginatedBlogs = blogs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            // Set ViewBag values for pagination
+            ViewBag.PageCount = pageCount;
+            ViewBag.PageNumber = pageNumber;
+
+            return View(paginatedBlogs);
+        }
 
 
-        // GET: Blogs/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    //fetching comments
-        //    var comments = await _context.Comments
-        //.Include(c => c.User)
-        //.Where(c => c.BlogID == id)
-        //.ToListAsync();
 
-        //    ViewBag.Comments = comments;
 
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var blog = await _context.Blogs
-        //        .Include(b => b.User)
-        //        .FirstOrDefaultAsync(m => m.BlogID == id);
-        //    if (blog == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return View(blog);
-        //}
+
 
         public async Task<IActionResult> Details(int? id)
         {
