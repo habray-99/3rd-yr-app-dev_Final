@@ -2,12 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using WebApplication6.Areas.Identity.Data;
 
 namespace WebApplication6.Areas.Identity.Pages.Account.Manage
