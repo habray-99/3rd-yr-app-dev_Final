@@ -23,32 +23,59 @@ namespace WebApplication6.Controllers
         }
 
         // GET: Blogs
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+
+        //    var myDbContext = _context.Blogs.Include(b => b.User);
+        //    var blogs = await myDbContext.ToListAsync();
+        //    var reactionCounts = await GetReactionCounts();
+
+        //    ViewData["ReactionCounts"] = reactionCounts;
+
+        //    var commentReactionCounts = await GetCommentReactionCounts();
+        //    ViewData["CommentReactionCounts"] = commentReactionCounts;
+
+
+        //    ////
+        //    // Fetch the user's comment reactions
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userReactions = await _context.Reactions
+        //        .Where(r => r.UserID == userId)
+        //        .ToListAsync();
+
+        //    ViewBag.BlogReactions = userReactions;
+        //    ///
+
+        //    //var myDbContext = _context.Blogs.Include(b => b.User);
+        //    return View(await myDbContext.ToListAsync());
+        //}
+
+
+        public async Task<IActionResult> Index(int? page)
         {
+            int pageSize = 5; // Number of items per page
+            int pageNumber = page ?? 1; // Use the provided page number or default to 1
 
             var myDbContext = _context.Blogs.Include(b => b.User);
             var blogs = await myDbContext.ToListAsync();
-            var reactionCounts = await GetReactionCounts();
 
-            ViewData["ReactionCounts"] = reactionCounts;
+            // Calculate total number of pages
+            int pageCount = (int)Math.Ceiling(blogs.Count / (double)pageSize);
 
-            var commentReactionCounts = await GetCommentReactionCounts();
-            ViewData["CommentReactionCounts"] = commentReactionCounts;
+            // Ensure the page number is within the valid range
+            pageNumber = Math.Max(1, Math.Min(pageNumber, pageCount));
 
+            // Skip items based on the current page and take 'pageSize' items
+            var paginatedBlogs = blogs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-            ////
-            // Fetch the user's comment reactions
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userReactions = await _context.Reactions
-                .Where(r => r.UserID == userId)
-                .ToListAsync();
+            // Set ViewBag values
+            ViewBag.PageCount = pageCount;
+            ViewBag.PageNumber = pageNumber;
 
-            ViewBag.BlogReactions = userReactions;
-            ///
-
-            //var myDbContext = _context.Blogs.Include(b => b.User);
-            return View(await myDbContext.ToListAsync());
+            return View(paginatedBlogs);
         }
+
+
 
 
         ///
