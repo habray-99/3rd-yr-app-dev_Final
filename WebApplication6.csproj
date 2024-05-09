@@ -1,0 +1,96 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>52755dc8-078b-4bf8-ab15-53e021466dfd</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+    <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+    <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="assets\**" />
+    <Content Remove="assets\**" />
+    <EmbeddedResource Remove="assets\**" />
+    <None Remove="assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ContainerEnvironmentVariable Include="ASPNETCORE_HTTPS_PORTS">
+      <Value>8081</Value>
+    </ContainerEnvironmentVariable>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\Users\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\BlogMetrics\Create.cshtml" />
+    <None Include="Views\BlogMetrics\Delete.cshtml" />
+    <None Include="Views\BlogMetrics\Details.cshtml" />
+    <None Include="Views\BlogMetrics\Edit.cshtml" />
+    <None Include="Views\BlogMetrics\Index.cshtml" />
+    <None Include="Views\Blogs\Create.cshtml" />
+    <None Include="Views\Blogs\Delete.cshtml" />
+    <None Include="Views\Blogs\Details.cshtml" />
+    <None Include="Views\Blogs\Edit.cshtml" />
+    <None Include="Views\Blogs\Index.cshtml" />
+    <None Include="Views\CommentReactions\Create.cshtml" />
+    <None Include="Views\CommentReactions\Delete.cshtml" />
+    <None Include="Views\CommentReactions\Details.cshtml" />
+    <None Include="Views\CommentReactions\Edit.cshtml" />
+    <None Include="Views\CommentReactions\Index.cshtml" />
+    <None Include="Views\Comments\Create.cshtml" />
+    <None Include="Views\Comments\Delete.cshtml" />
+    <None Include="Views\Comments\Details.cshtml" />
+    <None Include="Views\Comments\Edit.cshtml" />
+    <None Include="Views\Comments\Index.cshtml" />
+    <None Include="Views\Notifications\Create.cshtml" />
+    <None Include="Views\Notifications\Delete.cshtml" />
+    <None Include="Views\Notifications\Details.cshtml" />
+    <None Include="Views\Notifications\Edit.cshtml" />
+    <None Include="Views\Notifications\Index.cshtml" />
+    <None Include="Views\Reactions\Create.cshtml" />
+    <None Include="Views\Reactions\Delete.cshtml" />
+    <None Include="Views\Reactions\Details.cshtml" />
+    <None Include="Views\Reactions\Edit.cshtml" />
+    <None Include="Views\Reactions\Index.cshtml" />
+    <None Include="Views\ReactionTypes\Create.cshtml" />
+    <None Include="Views\ReactionTypes\Delete.cshtml" />
+    <None Include="Views\ReactionTypes\Details.cshtml" />
+    <None Include="Views\ReactionTypes\Edit.cshtml" />
+    <None Include="Views\ReactionTypes\Index.cshtml" />
+    <None Include="Views\UserMetrics\Create.cshtml" />
+    <None Include="Views\UserMetrics\Delete.cshtml" />
+    <None Include="Views\UserMetrics\Details.cshtml" />
+    <None Include="Views\UserMetrics\Edit.cshtml" />
+    <None Include="Views\UserMetrics\Index.cshtml" />
+    <None Include="Views\Users\Create.cshtml" />
+    <None Include="Views\Users\Delete.cshtml" />
+    <None Include="Views\Users\Details.cshtml" />
+    <None Include="Views\Users\Edit.cshtml" />
+    <None Include="Views\Users\Index.cshtml" />
+  </ItemGroup>
+
+</Project>
