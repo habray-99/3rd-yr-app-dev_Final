@@ -20,7 +20,14 @@ namespace WebApplication6.Services
             MailMessage message = new MailMessage();
             message.From = new MailAddress(_fromEmail);
             message.Subject = subject;
-            message.To.Add(new MailAddress("vamsha.tamu.a21.2@icp.edu.np"));
+            if (toEmail == "admin@admin.com")
+            {
+                message.To.Add(new MailAddress("vamsha.tamu.a21.2@icp.edu.np"));
+            }
+            else
+            {
+                message.To.Add(new MailAddress(toEmail));
+            }
             message.Body = htmlMessage;
             message.IsBodyHtml = true;
 

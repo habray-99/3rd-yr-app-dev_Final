@@ -63,15 +63,15 @@
                         </li>
                     </ul>
                     @{
-var currentUser = await UserManager.GetUserAsync(User);
-if (currentUser != null)
-    {
-            var notifications = _context.Notifications
-            .Where(n => n.UserID == currentUser.Id)
-            .ToList();
-        <partial name="_NotificationsPartial" model="@notifications" />
-    }
-} 
+                    var currentUser = await UserManager.GetUserAsync(User);
+                    if (currentUser != null)
+                        {
+                                var notifications = _context.Notifications
+                                .Where(n => n.UserID == currentUser.Id)
+                                .ToList();
+                            <partial name="_NotificationsPartial" model="@notifications" />
+                        }
+                    } 
                     <partial name="_LoginPartial" />
                 </div>
             </div>

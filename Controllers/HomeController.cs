@@ -35,7 +35,9 @@ public class HomeController : Controller
 
         var topBloggers = (month.HasValue || year.HasValue)
             ? _context.Users.OrderByDescending(u => u.Blogs.Count + u.Comments.Count + u.Reactions.Count(r => r.ReactionTypeID == 1))
-                .Where(u => u.Blogs.Any(b => (month.HasValue ? b.CreatedDate.Month == month : true) && (year.HasValue ? b.CreatedDate.Year == year : true)))
+                .Where(u => u.Blogs.Any(b =>
+                    (!month.HasValue || b.CreatedDate.Month == month) &&
+                    (!year.HasValue || b.CreatedDate.Year == year)))
                 .Take(10)
                 .ToList()
             : _context.Users.OrderByDescending(u => u.Blogs.Count + u.Comments.Count + u.Reactions.Count(r => r.ReactionTypeID == 1))

@@ -138,95 +138,25 @@ public class Program
                 }
             }
         }
-        //using (var scope = app.Services.CreateScope())
-        //{
-        //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDBContext>();
 
-        //    const string email = "iamadmin@admin.com";
-        //    const string password = "Test1234";
-        //    if (await userManager.FindByEmailAsync(email) == null)
-        //    {
-        //        var user = new CustomUser
-        //        {
-        //            UserName = email,
-        //            Email = email,
-        //            EmailConfirmed = true
-        //        };
-        //        try
-        //        {
-        //            var result = await userManager.CreateAsync(user, password);
-        //            if (result.Succeeded)
-        //                await userManager.AddToRoleAsync(user, "Admin");
-        //            else
-        //                foreach (var error in result.Errors)
-        //                    // Log or handle each error
-        //                    Console.WriteLine(error.Description);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            // Log or handle the exception
-        //            Console.WriteLine($"Failed to create user {email}: {ex.Message}");
-        //        }
-        //    }
-        //}
-        //using (var scope = app.Services.CreateScope())
-        //{
-        //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
+            // Check if reaction types already exist
+            var existingReactionTypes = await dbContext.ReactionTypes.ToListAsync();
+            if (existingReactionTypes.Count == 0)
+            {
+                // Create "Up vote" reaction type
+                var upvoteReactionType = new ReactionType { ReactionName = "Up Vote" };
+                dbContext.ReactionTypes.Add(upvoteReactionType);
 
-        //    const string email = "iamadmin@admin.com";
-        //    const string password = "Test1234";
-        //    if (await userManager.FindByEmailAsync(email) == null)
-        //    {
-        //        var user = new CustomUser
-        //        {
-        //            UserName = email,
-        //            Email = email,
-        //            EmailConfirmed = true
-        //        };
-        //        try
-        //        {
-        //            var result = await userManager.CreateAsync(user, password);
-        //            if (result.Succeeded)
-        //                await userManager.AddToRoleAsync(user, "Admin");
-        //            else
-        //                foreach (var error in result.Errors)
-        //                    // Log or handle each error
-        //                    Console.WriteLine(error.Description);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            // Log or handle the exception
-        //            Console.WriteLine($"Failed to create user {email}: {ex.Message}");
-        //        }
-        //    }
-        //}
-        //using (var scope = app.Services.CreateScope())
-        //{
-        //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
+                // Create "Down vote" reaction type
+                var downvoteReactionType = new ReactionType { ReactionName = "Down Vote" };
+                dbContext.ReactionTypes.Add(downvoteReactionType);
 
-        //     string email = "admin@admin.com";
-        //     string password = "Test@1234";
-        //     if (await userManager.FindByEmailAsync(email) == null)
-        //     {
-        //         var user = new CustomUser();
-        //         user.UserName = email;
-        //         user.Email = email;
-        //         user.EmailConfirmed = true;
-        //         var result = await userManager.CreateAsync(user, password);
-        //         if (result.Succeeded)
-        //         {
-        //             await userManager.AddToRoleAsync(user, "Admin");
-        //         }
-        //         else
-        //         {
-        //             foreach (var error in result.Errors)
-        //             {
-        //                 // Log or handle each error
-        //                 Console.WriteLine(error.Description);
-        //             }
-        //         }
-        //     }
-        // }
+                await dbContext.SaveChangesAsync();
+            }
+        }
 
         // Start the application
         await app.RunAsync();

@@ -14,6 +14,7 @@ namespace WebApplication6.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<CustomUser> _signInManager;
+
         private readonly ILogger<LoginModel> _logger;
 
         public LoginModel(SignInManager<CustomUser> signInManager, ILogger<LoginModel> logger)
@@ -109,19 +110,23 @@ namespace WebApplication6.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    //TempData["SuccessMessage"] = "Login successful!";
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
+                    TempData["SuccessMessage"] = "Login successful!";
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
+                    TempData["SuccessMessage"] = "User account locked out.";
                     return RedirectToPage("./Lockout");
                 }
                 else
                 {
+                    TempData["SuccessMessage"] = "Invalid login attempt.";
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
