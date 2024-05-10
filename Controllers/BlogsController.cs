@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using WebApplication6.Areas.Identity.Data;
 using WebApplication6.Models;
 
@@ -22,59 +23,162 @@ namespace WebApplication6.Controllers
         }
 
         // GET: Blogs
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+
+        //    var myDbContext = _context.Blogs.Include(b => b.User);
+        //    var blogs = await myDbContext.ToListAsync();
+        //    var reactionCounts = await GetReactionCounts();
+
+        //    ViewData["ReactionCounts"] = reactionCounts;
+
+        //    var commentReactionCounts = await GetCommentReactionCounts();
+        //    ViewData["CommentReactionCounts"] = commentReactionCounts;
+
+
+        //    ////
+        //    // Fetch the user's comment reactions
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userReactions = await _context.Reactions
+        //        .Where(r => r.UserID == userId)
+        //        .ToListAsync();
+
+        //    ViewBag.BlogReactions = userReactions;
+        //    ///
+
+        //    //var myDbContext = _context.Blogs.Include(b => b.User);
+        //    return View(await myDbContext.ToListAsync());
+        //}
+
+
+
+        //works only for pagination
+        //public async Task<IActionResult> Index(int? page)
+        //{
+        //    int pageSize = 5; // Number of items per page
+        //    int pageNumber = page ?? 1; // Use the provided page number or default to 1
+
+        //    var myDbContext = _context.Blogs.Include(b => b.User);
+        //    var blogs = await myDbContext.ToListAsync();
+
+        //    // Calculate total number of pages
+        //    int pageCount = (int)Math.Ceiling(blogs.Count / (double)pageSize);
+
+        //    // Ensure the page number is within the valid range
+        //    pageNumber = Math.Max(1, Math.Min(pageNumber, pageCount));
+
+        //    // Skip items based on the current page and take 'pageSize' items
+        //    var paginatedBlogs = blogs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+        //    // Set ViewBag values
+        //    ViewBag.PageCount = pageCount;
+        //    ViewBag.PageNumber = pageNumber;
+
+        //    return View(paginatedBlogs);
+        //}
+
+
+
+        //works only for filter
+        //public async Task<IActionResult> Index(string filterOption)
+        //{
+        //    var myDbContext = _context.Blogs.Include(b => b.User);
+        //    var blogs = await myDbContext.ToListAsync();
+        //    var reactionCounts = await GetReactionCounts();
+
+        //    ViewData["ReactionCounts"] = reactionCounts;
+        //    ViewData["CommentReactionCounts"] = await GetCommentReactionCounts();
+
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userReactions = await _context.Reactions
+        //        .Where(r => r.UserID == userId)
+        //        .ToListAsync();
+
+        //    ViewBag.BlogReactions = userReactions;
+
+        //    switch (filterOption)
+        //    {
+        //        case "popular":
+        //            blogs = blogs.OrderByDescending(b => (reactionCounts.ContainsKey(b.BlogID) ? reactionCounts[b.BlogID].upvotes - reactionCounts[b.BlogID].downvotes : 0)).ToList();
+        //            break;
+        //        case "random":
+        //            blogs = blogs.OrderBy(b => Guid.NewGuid()).ToList();
+        //            break;
+        //        case "recency":
+        //            blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+        //            break;
+        //        default:
+        //            // Default to recency if no valid filter option is provided
+        //            blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+        //            break;
+        //    }
+
+        //    ViewBag.FilterOption = filterOption;
+
+        //    return View(blogs);
+        //}
+
+
+        public async Task<IActionResult> Index(string filterOption, int? page)
         {
+            int pageSize = 5; // Number of items per page
+            int pageNumber = page ?? 1; // Use the provided page number or default to 1
 
             var myDbContext = _context.Blogs.Include(b => b.User);
             var blogs = await myDbContext.ToListAsync();
             var reactionCounts = await GetReactionCounts();
 
             ViewData["ReactionCounts"] = reactionCounts;
+            ViewData["CommentReactionCounts"] = await GetCommentReactionCounts();
 
-            var commentReactionCounts = await GetCommentReactionCounts();
-            ViewData["CommentReactionCounts"] = commentReactionCounts;
-
-
-            ////
-            // Fetch the user's comment reactions
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userReactions = await _context.Reactions
                 .Where(r => r.UserID == userId)
                 .ToListAsync();
 
             ViewBag.BlogReactions = userReactions;
-            ///
 
-            //var myDbContext = _context.Blogs.Include(b => b.User);
-            return View(await myDbContext.ToListAsync());
+            switch (filterOption)
+            {
+                case "popular":
+                    blogs = blogs.OrderByDescending(b => (reactionCounts.ContainsKey(b.BlogID) ? reactionCounts[b.BlogID].upvotes - reactionCounts[b.BlogID].downvotes : 0)).ToList();
+                    break;
+                case "random":
+                    blogs = blogs.OrderBy(b => Guid.NewGuid()).ToList();
+                    break;
+                case "recency":
+                    blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+                    break;
+                default:
+                    // Default to recency if no valid filter option is provided
+                    blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
+                    break;
+            }
+
+            ViewBag.FilterOption = filterOption;
+
+            // Calculate total number of pages
+            int pageCount = (int)Math.Ceiling(blogs.Count / (double)pageSize);
+
+            // Ensure the page number is within the valid range
+            pageNumber = Math.Max(1, Math.Min(pageNumber, pageCount));
+
+            // Skip items based on the current page and take 'pageSize' items
+            var paginatedBlogs = blogs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            // Set ViewBag values for pagination
+            ViewBag.PageCount = pageCount;
+            ViewBag.PageNumber = pageNumber;
+
+            return View(paginatedBlogs);
         }
 
-        // GET: Blogs/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    //fetching comments
-        //    var comments = await _context.Comments
-        //.Include(c => c.User)
-        //.Where(c => c.BlogID == id)
-        //.ToListAsync();
 
-        //    ViewBag.Comments = comments;
 
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var blog = await _context.Blogs
-        //        .Include(b => b.User)
-        //        .FirstOrDefaultAsync(m => m.BlogID == id);
-        //    if (blog == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return View(blog);
-        //}
+
+
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -204,18 +308,39 @@ namespace WebApplication6.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-
         //public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID")] Blog blog, IFormFile ProfilePictureUpload)
         //{
+
         //    if (id != blog.BlogID)
         //    {
         //        return NotFound();
         //    }
 
+        //    //blog.Body = BlogID;
+        //    //blog.Title = Title;
+
         //    if (ModelState.IsValid)
         //    {
         //        try
         //        {
+        //            if (ProfilePictureUpload != null && ProfilePictureUpload.Length > 0)
+        //            {
+        //                // Check the file size (in bytes)
+        //                const int maxFileSize = 3 * 1024 * 1024; // 3 MB
+        //                if (ProfilePictureUpload.Length > maxFileSize)
+        //                {
+        //                    ModelState.AddModelError("ProfilePictureUpload", "The profile picture must be 3 MB or smaller.");
+        //                    ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
+        //                    return View(blog);
+        //                }
+
+        //                using (var memoryStream = new MemoryStream())
+        //                {
+        //                    await ProfilePictureUpload.CopyToAsync(memoryStream);
+        //                    blog.BlogPicture = memoryStream.ToArray();
+        //                }
+        //            }
+
         //            _context.Update(blog);
         //            await _context.SaveChangesAsync();
         //        }
@@ -236,56 +361,41 @@ namespace WebApplication6.Controllers
         //    return View(blog);
         //}
 
+
+
+        ////works
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID")] Blog blog, IFormFile ProfilePictureUpload)
+        public async Task<IActionResult> Edit(int id, string title, string body, IFormFile blogPictureUpload)
         {
-            if (id != blog.BlogID)
+            // Retrieve the existing blog post from the database
+            var blog = await _context.Blogs.FindAsync(id);
+
+            if (blog == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // Update the properties of the blog post
+            blog.Title = title;
+            blog.Body = body;
+
+            if (blogPictureUpload != null && blogPictureUpload.Length > 0)
             {
-                try
+                // Read the file contents and store them in the BlogPicture property
+                using (var memoryStream = new MemoryStream())
                 {
-                    if (ProfilePictureUpload != null && ProfilePictureUpload.Length > 0)
-                    {
-                        // Check the file size (in bytes)
-                        const int maxFileSize = 3 * 1024 * 1024; // 3 MB
-                        if (ProfilePictureUpload.Length > maxFileSize)
-                        {
-                            ModelState.AddModelError("ProfilePictureUpload", "The profile picture must be 3 MB or smaller.");
-                            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
-                            return View(blog);
-                        }
-
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await ProfilePictureUpload.CopyToAsync(memoryStream);
-                            blog.BlogPicture = memoryStream.ToArray();
-                        }
-                    }
-
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
+                    await blogPictureUpload.CopyToAsync(memoryStream);
+                    blog.BlogPicture = memoryStream.ToArray();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BlogExists(blog.BlogID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
-            return View(blog);
+
+            _context.Blogs.Update(blog);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
+
 
 
         // GET: Blogs/Delete/5

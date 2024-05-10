@@ -158,6 +158,29 @@ public class Program
             }
         }
 
+
+        //for pre defining reaction types
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDBContext>();
+
+            // Check if reaction types already exist
+            var existingReactionTypes = await dbContext.ReactionTypes.ToListAsync();
+            if (existingReactionTypes.Count == 0)
+            {
+                // Create "Up vote" reaction type
+                var upvoteReactionType = new ReactionType { ReactionName = "Up Vote" };
+                dbContext.ReactionTypes.Add(upvoteReactionType);
+
+                // Create "Down vote" reaction type
+                var downvoteReactionType = new ReactionType { ReactionName = "Down Vote" };
+                dbContext.ReactionTypes.Add(downvoteReactionType);
+
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+
         // Start the application
         await app.RunAsync();
     }
