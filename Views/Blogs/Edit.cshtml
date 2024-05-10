@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
 <h1>Edit</h1>
@@ -32,10 +33,40 @@
                 <span asp-validation-for="UserID" class="text-danger"></span>
             </div>
 
+            @* <div class="form-group">
+                <label for="BlogPictureUpload" class="control-label">Profile Picture</label>
+                <input value="@String.Format("data:image/jpeg;base64,{0}", Convert.ToBase64String(Model.BlogPicture))" type="file" name="BlogPictureUpload" class="form-control" />
+            </div> *@
+
             <div class="form-group">
-                <label for="ProfilePictureUpload" class="control-label">Profile Picture</label>
-                <input type="file" name="ProfilePictureUpload" class="form-control" />
+                <label for="BlogPictureUpload" class="control-label">Profile Picture</label>
+                @if (Model.BlogPicture != null && Model.BlogPicture.Length > 0)
+                {
+                    <input type="file" name="BlogPictureUpload" value="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.BlogPicture))" class="form-control" />
+                }else{
+                    <input type="file" name="BlogPictureUpload" class="form-control" />
+                }
+                
             </div>
+
+            @* <div class="form-group">
+                <label for="BlogPictureUpload" class="control-label">Profile Picture</label>
+                @if (Model.BlogPicture != null && Model.BlogPicture.Length > 0)
+                {
+                    <img src="@String.Format("data:image/jpeg;base64,{0}", Convert.ToBase64String(Model.BlogPicture))" alt="Existing Image" class="img-fluid" />
+                }
+                <input type="file" name="BlogPictureUpload" class="form-control" />
+            </div> *@
+
+            @* <div class="form-group">
+                <label for="ProfilePictureUpload" class="control-label">Profile Picture</label>
+                @if (Model.BlogPicture != null && Model.BlogPicture.Length > 0)
+                {
+                    <img src="@String.Format("data:image/jpeg;base64,{0}", Convert.ToBase64String(Model.BlogPicture))" alt="Existing Image" class="img-fluid" />
+                }
+                <input type="file" name="BlogPicture" class="form-control" />
+                <span asp-validation-for="BlogPicture" class="text-danger"></span>
+            </div> *@
 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
