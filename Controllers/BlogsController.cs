@@ -23,102 +23,8 @@ namespace WebApplication6.Controllers
         }
 
         // GET: Blogs
-        //public async Task<IActionResult> Index()
-        //{
 
-        //    var myDbContext = _context.Blogs.Include(b => b.User);
-        //    var blogs = await myDbContext.ToListAsync();
-        //    var reactionCounts = await GetReactionCounts();
-
-        //    ViewData["ReactionCounts"] = reactionCounts;
-
-        //    var commentReactionCounts = await GetCommentReactionCounts();
-        //    ViewData["CommentReactionCounts"] = commentReactionCounts;
-
-
-        //    ////
-        //    // Fetch the user's comment reactions
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    var userReactions = await _context.Reactions
-        //        .Where(r => r.UserID == userId)
-        //        .ToListAsync();
-
-        //    ViewBag.BlogReactions = userReactions;
-        //    ///
-
-        //    //var myDbContext = _context.Blogs.Include(b => b.User);
-        //    return View(await myDbContext.ToListAsync());
-        //}
-
-
-
-        //works only for pagination
-        //public async Task<IActionResult> Index(int? page)
-        //{
-        //    int pageSize = 5; // Number of items per page
-        //    int pageNumber = page ?? 1; // Use the provided page number or default to 1
-
-        //    var myDbContext = _context.Blogs.Include(b => b.User);
-        //    var blogs = await myDbContext.ToListAsync();
-
-        //    // Calculate total number of pages
-        //    int pageCount = (int)Math.Ceiling(blogs.Count / (double)pageSize);
-
-        //    // Ensure the page number is within the valid range
-        //    pageNumber = Math.Max(1, Math.Min(pageNumber, pageCount));
-
-        //    // Skip items based on the current page and take 'pageSize' items
-        //    var paginatedBlogs = blogs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-        //    // Set ViewBag values
-        //    ViewBag.PageCount = pageCount;
-        //    ViewBag.PageNumber = pageNumber;
-
-        //    return View(paginatedBlogs);
-        //}
-
-
-
-        //works only for filter
-        //public async Task<IActionResult> Index(string filterOption)
-        //{
-        //    var myDbContext = _context.Blogs.Include(b => b.User);
-        //    var blogs = await myDbContext.ToListAsync();
-        //    var reactionCounts = await GetReactionCounts();
-
-        //    ViewData["ReactionCounts"] = reactionCounts;
-        //    ViewData["CommentReactionCounts"] = await GetCommentReactionCounts();
-
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    var userReactions = await _context.Reactions
-        //        .Where(r => r.UserID == userId)
-        //        .ToListAsync();
-
-        //    ViewBag.BlogReactions = userReactions;
-
-        //    switch (filterOption)
-        //    {
-        //        case "popular":
-        //            blogs = blogs.OrderByDescending(b => (reactionCounts.ContainsKey(b.BlogID) ? reactionCounts[b.BlogID].upvotes - reactionCounts[b.BlogID].downvotes : 0)).ToList();
-        //            break;
-        //        case "random":
-        //            blogs = blogs.OrderBy(b => Guid.NewGuid()).ToList();
-        //            break;
-        //        case "recency":
-        //            blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
-        //            break;
-        //        default:
-        //            // Default to recency if no valid filter option is provided
-        //            blogs = blogs.OrderByDescending(b => b.CreatedDate).ToList();
-        //            break;
-        //    }
-
-        //    ViewBag.FilterOption = filterOption;
-
-        //    return View(blogs);
-        //}
-
-
+        ///both pagination and filter as per question
         public async Task<IActionResult> Index(string filterOption, int? page)
         {
             int pageSize = 5; // Number of items per page
@@ -127,9 +33,11 @@ namespace WebApplication6.Controllers
             var myDbContext = _context.Blogs.Include(b => b.User);
             var blogs = await myDbContext.ToListAsync();
             var reactionCounts = await GetReactionCounts();
+            var commentCounts = await GetCommentCounts(); // New line to get comment counts
 
             ViewData["ReactionCounts"] = reactionCounts;
             ViewData["CommentReactionCounts"] = await GetCommentReactionCounts();
+            ViewData["CommentCounts"] = commentCounts; // Pass comment counts to the view
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userReactions = await _context.Reactions
@@ -141,7 +49,7 @@ namespace WebApplication6.Controllers
             switch (filterOption)
             {
                 case "popular":
-                    blogs = blogs.OrderByDescending(b => (reactionCounts.ContainsKey(b.BlogID) ? reactionCounts[b.BlogID].upvotes - reactionCounts[b.BlogID].downvotes : 0)).ToList();
+                    blogs = blogs.OrderByDescending(b => CalculatePopularity(b, reactionCounts, commentCounts)).ToList();
                     break;
                 case "random":
                     blogs = blogs.OrderBy(b => Guid.NewGuid()).ToList();
@@ -172,6 +80,32 @@ namespace WebApplication6.Controllers
 
             return View(paginatedBlogs);
         }
+
+
+        // Method to calculate the popularity score for a blog post
+        private int CalculatePopularity(Blog blog, Dictionary<int, (int upvotes, int downvotes)> reactionCounts, Dictionary<int, int> commentCounts)
+        {
+            if (reactionCounts == null || !reactionCounts.ContainsKey(blog.BlogID) || !commentCounts.ContainsKey(blog.BlogID))
+            {
+                // If reactionCounts or commentCounts is null or doesn't contain the blog ID, return a default popularity score
+                return 0;
+            }
+
+            int upvoteWeightage = 2;
+            int downvoteWeightage = -1;
+            int commentWeightage = 1;
+
+            int upvotes = reactionCounts[blog.BlogID].upvotes;
+            int downvotes = reactionCounts[blog.BlogID].downvotes;
+            int comments = commentCounts[blog.BlogID]; // Retrieve comment count
+
+            int popularity = upvoteWeightage * upvotes + downvoteWeightage * downvotes + commentWeightage * comments;
+
+            return popularity;
+        }
+
+
+
 
 
 
@@ -255,8 +189,19 @@ namespace WebApplication6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("BlogID,Title,Body,UserID")] Blog blog, IFormFile ProfilePictureUpload)
         {
+            
+
             blog.CreatedDate = DateTime.Now;
             blog.UserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(blog.UserID))
+            {
+                // Show alert message
+                string script = "<script>alert('You need to be logged in to perform this action.');";
+                // Redirect to Blogs page after the alert
+                script += "window.history.back();</script>";
+                return Content(script, "text/html");
+            }
 
             if (ModelState.IsValid)
             {
@@ -493,6 +438,18 @@ namespace WebApplication6.Controllers
 
             return reactionCounts;
         }
+
+
+        // for comment count
+        private async Task<Dictionary<int, int>> GetCommentCounts()
+        {
+            var commentCounts = await _context.Comments
+                .GroupBy(c => c.BlogID)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+
+            return commentCounts;
+        }
+
 
     }
 }

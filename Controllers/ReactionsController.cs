@@ -186,12 +186,14 @@ namespace WebApplication6.Controllers
 
             if (string.IsNullOrEmpty(newReaction.UserID))
             {
-
-                // Redirect the user to the login page
-                //return RedirectToAction("Login");
-                string script = "<script>alert('You need to be logged in to perform this action.');</script>";
+                // Show alert message
+                string script = "<script>alert('You need to be logged in to perform this action.');";
+                // Redirect to Blogs page after the alert
+                //script += "window.location.href = '/Blogs';</script>";
+                script += "window.history.back();</script>";
                 return Content(script, "text/html");
             }
+
 
             // Get the existing reaction for the current user, blog, and reaction type
             var existingReaction = await _context.Reactions

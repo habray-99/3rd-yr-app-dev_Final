@@ -175,6 +175,15 @@ namespace WebApplication6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateComment(Comment comment)
         {
+            if (string.IsNullOrEmpty(comment.UserID))
+            {
+                // Show alert message
+                string script = "<script>alert('You need to be logged in to perform this action.');";
+                // Redirect to Blogs page after the alert
+                script += "window.history.back();</script>";
+                return Content(script, "text/html");
+            }
+
             if (ModelState.IsValid)
             {
                 comment.CreatedDate = DateTime.Now; // Set the created date
