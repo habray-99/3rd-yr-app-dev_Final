@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication6.Areas.Identity.Data;
 
@@ -11,9 +12,11 @@ using WebApplication6.Areas.Identity.Data;
 namespace WebApplication6.Migrations
 {
     [DbContext(typeof(IdentityDBContext))]
-    partial class IdentityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240510025850_1")]
+    partial class _1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -437,7 +440,8 @@ namespace WebApplication6.Migrations
                     b.Property<string>("CustomUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ReactionTypeID")
+                    b.Property<int?>("ReactionTypeID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("UserID")
@@ -472,18 +476,6 @@ namespace WebApplication6.Migrations
                     b.HasKey("ReactionTypeID");
 
                     b.ToTable("ReactionTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            ReactionTypeID = 1,
-                            ReactionName = "Upvote"
-                        },
-                        new
-                        {
-                            ReactionTypeID = 2,
-                            ReactionName = "Downvote"
-                        });
                 });
 
             modelBuilder.Entity("WebApplication6.Models.User", b =>

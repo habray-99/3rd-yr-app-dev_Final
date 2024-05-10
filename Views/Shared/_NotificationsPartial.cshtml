@@ -1,0 +1,67 @@
+﻿@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
+@inject IdentityDBContext _context
+@using Microsoft.AspNetCore.Identity        
+@using Microsoft.IdentityModel.Tokens
+@using WebApplication6.Areas.Identity.Data
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+@* <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Dropdown button
+        <i class="fa fa-bell"></i>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+    </ul>
+</div> *@
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-bell"></i>
+        @{
+            var currentUser = await UserManager.GetUserAsync(User);
+            if (currentUser != null)
+            {
+                var unreadNotifications = _context.Notifications
+                    .Count(n => n.UserID == currentUser.Id && !n.IsSeen);
+
+                <span class="badge badge-light">@unreadNotifications</span>
+            }
+        }
+    </button>
+    <ul class="dropdown-menu">
+        @if (currentUser != null)
+        {
+            var notifications = _context.Notifications
+            .Where(n => n.UserID == currentUser.Id)
+            .OrderByDescending(n => n.CreatedDate)
+            .ToList();
+            @if (notifications.IsNullOrEmpty())
+            {
+
+                <li><a class="dropdown-item" href="#">No notifications available</a></li>
+            }
+            else
+            {
+                @foreach (var notification in notifications)
+                {
+                    <li class="dropdown-item @(notification.IsSeen ? "" : "font-weight-bold")">
+                        <a href="#">
+                            @notification.NotificationType
+                            @* <small class="text-muted">(@notification.CreatedDate?.ToString("yyyy-MM-dd HH:mm"))</small> *@
+                            <small class="text-muted">(@notification.CreatedDate?.ToString("g"))</small>
+                        </a>
+                    </li>
+                }
+            }
+        }
+        else
+        {
+            <li><a class="dropdown-item" href="#">No notifications available</a></li>
+        }
+    </ul>
+</div>

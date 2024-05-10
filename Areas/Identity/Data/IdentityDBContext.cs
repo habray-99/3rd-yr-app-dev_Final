@@ -19,6 +19,8 @@ public class IdentityDBContext : IdentityDbContext<CustomUser>
     public DbSet<ReactionType> ReactionTypes { get; set; }
     //public DbSet<CustomUser> User { get; set; }
     public DbSet<CustomUser> Users { get; set; } = default;
+    public DbSet<BlogMetric> BlogMetrics { get; set; }
+    public DbSet<UserMetric> UserMetrics { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,7 +49,7 @@ public class IdentityDBContext : IdentityDbContext<CustomUser>
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Reaction>()
             .HasOne(r => r.Blog)
-            .WithMany()
+            .WithMany(b => b.Reactions)
             .HasForeignKey(r => r.BlogID)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -107,16 +109,21 @@ public class IdentityDBContext : IdentityDbContext<CustomUser>
 
         modelBuilder.Entity<UserMetric>()
             .HasOne(um => um.User)
-            .WithMany()
+            .WithMany(u => u.UserMetrics)
             .HasForeignKey(um => um.UserID)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ReactionType>().HasData(
+            new ReactionType { ReactionTypeID = 1, ReactionName = "Upvote" },
+            new ReactionType { ReactionTypeID = 2, ReactionName = "Downvote" }
+        );
     }
 
     public DbSet<WebApplication6.Models.User> User { get; set; } = default!;
 
-public DbSet<WebApplication6.Models.BlogMetric> BlogMetric { get; set; } = default!;
+    public DbSet<WebApplication6.Models.BlogMetric> BlogMetric { get; set; } = default!;
 
-public DbSet<WebApplication6.Models.UserMetric> UserMetric { get; set; } = default!;
+    public DbSet<WebApplication6.Models.UserMetric> UserMetric { get; set; } = default!;
 
     //public DbSet<User> User { get; set; } = default!;
 }
