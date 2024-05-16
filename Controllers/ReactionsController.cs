@@ -209,6 +209,14 @@ namespace WebApplication6.Controllers
 
                 // Add the new reaction
                 _context.Reactions.Add(newReaction);
+                var blog = await _context.Blogs.FindAsync(newReaction.BlogID);
+                if (blog != null)
+                {
+                    var user = await _context.Users.FindAsync(newReaction.UserID);
+                    string userName = user?.UserName ?? "Unknown";
+                    // Register a notification for the blog owner
+                    newReaction.CreateReactionNotification(_context, blog.UserID, userName);
+                }
             }
             else
             {
