@@ -23,12 +23,16 @@ namespace WebApplication6.Models
 
         public DateTime? CreatedDate { get; set; } = DateTime.Now;
 
-        public void CreateReactionNotification(IdentityDBContext context, string blogOwnerUserId)
+        public void CreateReactionNotification(IdentityDBContext context, string blogOwnerUserId, string byWhome)
         {
+            // Get the reaction type name
+            var reactionType = context.ReactionTypes.Find(ReactionTypeID);
+            var reactionName = reactionType?.ReactionName;
+
             var notification = new Notification
             {
                 UserID = blogOwnerUserId,
-                NotificationType = "New reaction on your blog post",
+                NotificationType = $"New reaction ({reactionName}) on your blog post by: {byWhome}",
                 EntityID = this.BlogID
             };
 
