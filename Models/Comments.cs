@@ -22,15 +22,26 @@ namespace WebApplication6.Models
 
         public ICollection<CommentReaction>? CommentReactions { get; set; }
 
-        public void CreateCommentNotification(IdentityDBContext context, string blogOwnerUserId)
+        //public void CreateCommentNotification(IdentityDBContext context, string blogOwnerUserId. string byWhome)
+        //{
+        //    var notification = new Notification
+        //    {
+        //        UserID = blogOwnerUserId,
+        //        NotificationType = $"New comment on your blog post: {byWhome}",
+        //        EntityID = this.BlogID
+        //    };
+
+        //    context.Notifications.Add(notification);
+        //    context.SaveChanges();
+        //}
+        public void CreateCommentNotification(IdentityDBContext context, string blogOwnerUserId, string byWhome)
         {
             var notification = new Notification
             {
                 UserID = blogOwnerUserId,
-                NotificationType = "New comment on your blog post",
+                NotificationType = $"New comment on your blog post by: {byWhome}",
                 EntityID = this.BlogID
             };
-
             context.Notifications.Add(notification);
             context.SaveChanges();
         }
