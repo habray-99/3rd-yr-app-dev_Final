@@ -195,9 +195,19 @@ namespace WebApplication6.Controllers
                     .ToListAsync();
                 _context.CommentReactions.RemoveRange(existingReactions);
 
-
                 // Add the new reaction
                 _context.CommentReactions.Add(newReaction);
+
+                // Inside the RegisterCommentReactionNotification method
+                var commentFromDB = await _context.Comments.FindAsync(newReaction.CommentID);
+                if (commentFromDB != null)
+                {
+                    // Get the username by userId
+                    var user = await _context.Users.FindAsync(newReaction.UserID);
+                    string userName = user?.UserName ?? "Unknown";
+                    // Register a notification for the comment author
+                    RegisterCommentReactionNotification(commentFromDB.UserID, newReaction.ReactionTypeID, userName);
+                }
             }
             else
             {
@@ -211,8 +221,22 @@ namespace WebApplication6.Controllers
             var comment = await _context.Comments.FindAsync(newReaction.CommentID);
             return RedirectToAction("Details", "Blogs", new { id = comment.BlogID });
         }
+        private void RegisterCommentReactionNotification(string commentAuthorUserId, int? reactionTypeId, string byWhome)
+        {
+            // Get the reaction type name
+            var reactionType = _context.ReactionTypes.Find(reactionTypeId);
+            var reactionName = reactionType?.ReactionName;
 
+            // Create a new notification
+            var notification = new Notification
+            {
+                UserID = commentAuthorUserId,
+                NotificationType = $"New reaction ({reactionName}) on your comment by: {byWhome}",
+                // You can set any additional properties for the Notification entity here
+            };
 
-
+            // Add the notification to the database context
+            _context.Notifications.Add(notification);
+        }
     }
 }
