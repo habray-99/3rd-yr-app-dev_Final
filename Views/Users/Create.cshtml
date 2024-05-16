@@ -24,11 +24,11 @@
             </div>
             <!-- ProfilePicture handling is more complex due to binary data. Consider using a file upload control -->
             <!-- For demonstration, we'll skip ProfilePicture -->
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="UserName" class="control-label" hidden></label>
                 <input asp-for="UserName" class="form-control" required hidden value="Admin"/>
                 <span asp-validation-for="UserName" class="text-danger" hidden></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" required />
