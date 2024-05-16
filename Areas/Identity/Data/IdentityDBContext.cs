@@ -113,10 +113,10 @@ public class IdentityDBContext : IdentityDbContext<CustomUser>
             .HasForeignKey(um => um.UserID)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<ReactionType>().HasData(
-            new ReactionType { ReactionTypeID = 1, ReactionName = "Upvote" },
-            new ReactionType { ReactionTypeID = 2, ReactionName = "Downvote" }
-        );
+        //mdelBuilder.Entity<ReactionType>().HasData(
+        //    new ReactionType { ReactionTypeID = 1, ReactionName = "Up Vote" },
+        //    new ReactionType { ReactionTypeID = 2, ReactionName = "Down vote" }
+        //);
     }
 
     public DbSet<WebApplication6.Models.User> User { get; set; } = default!;

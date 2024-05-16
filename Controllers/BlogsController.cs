@@ -80,8 +80,6 @@ namespace WebApplication6.Controllers
 
             return View(paginatedBlogs);
         }
-
-
         // Method to calculate the popularity score for a blog post
         private int CalculatePopularity(Blog blog, Dictionary<int, (int upvotes, int downvotes)> reactionCounts, Dictionary<int, int> commentCounts)
         {
@@ -90,7 +88,6 @@ namespace WebApplication6.Controllers
                 // If reactionCounts or commentCounts is null or doesn't contain the blog ID, return a default popularity score
                 return 0;
             }
-
             int upvoteWeightage = 2;
             int downvoteWeightage = -1;
             int commentWeightage = 1;
@@ -103,16 +100,6 @@ namespace WebApplication6.Controllers
 
             return popularity;
         }
-
-
-
-
-
-
-
-
-
-
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -148,10 +135,6 @@ namespace WebApplication6.Controllers
                 .ToListAsync();
 
             ViewBag.UserReactions = userReactions;
-
-
-
-
             return View(blog);
         }
 
@@ -162,29 +145,6 @@ namespace WebApplication6.Controllers
             ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
-
-        // POST: Blogs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("BlogID,Title,Body,UserID,ImagePath")] Blog blog)
-        //{
-        //    blog.CreatedDate = DateTime.Now;
-        //    blog.UserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    if (ModelState.IsValid)
-        //    {
-        //        // Set the CreatedDate property to the current date
-        //        blog.CreatedDate = DateTime.Now;
-
-        //        _context.Add(blog);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
-        //    return View(blog);
-        //}
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("BlogID,Title,Body,UserID")] Blog blog, IFormFile ProfilePictureUpload)
@@ -247,64 +207,6 @@ namespace WebApplication6.Controllers
             ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
             return View(blog);
         }
-
-        // POST: Blogs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int? id, [Bind("BlogID,Title,Body,CreatedDate,UserID")] Blog blog, IFormFile ProfilePictureUpload)
-        //{
-
-        //    if (id != blog.BlogID)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    //blog.Body = BlogID;
-        //    //blog.Title = Title;
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            if (ProfilePictureUpload != null && ProfilePictureUpload.Length > 0)
-        //            {
-        //                // Check the file size (in bytes)
-        //                const int maxFileSize = 3 * 1024 * 1024; // 3 MB
-        //                if (ProfilePictureUpload.Length > maxFileSize)
-        //                {
-        //                    ModelState.AddModelError("ProfilePictureUpload", "The profile picture must be 3 MB or smaller.");
-        //                    ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
-        //                    return View(blog);
-        //                }
-
-        //                using (var memoryStream = new MemoryStream())
-        //                {
-        //                    await ProfilePictureUpload.CopyToAsync(memoryStream);
-        //                    blog.BlogPicture = memoryStream.ToArray();
-        //                }
-        //            }
-
-        //            _context.Update(blog);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!BlogExists(blog.BlogID))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["UserID"] = new SelectList(_context.Users, "Id", "Id", blog.UserID);
-        //    return View(blog);
-        //}
 
 
 
@@ -438,8 +340,6 @@ namespace WebApplication6.Controllers
 
             return reactionCounts;
         }
-
-
         // for comment count
         private async Task<Dictionary<int, int>> GetCommentCounts()
         {
@@ -449,7 +349,5 @@ namespace WebApplication6.Controllers
 
             return commentCounts;
         }
-
-
     }
 }

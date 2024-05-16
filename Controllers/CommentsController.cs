@@ -189,7 +189,14 @@ namespace WebApplication6.Controllers
                 comment.CreatedDate = DateTime.Now; // Set the created date
                 _context.Comments.Add(comment);
                 await _context.SaveChangesAsync();
-                // Optionally, you can redirect to the blog details page after creating the comment
+                var blog = await _context.Blogs.FindAsync(comment.BlogID);
+                if (blog != null)
+                {
+                    var user = await _context.Users.FindAsync(comment.UserID);
+                    string userName = user?.UserName ?? "Unknown";
+                    // Invoke the CreateCommentNotification method
+                    comment.CreateCommentNotification(_context, blog.UserID, userName);
+                }
                 return RedirectToAction("Details", "Blogs", new { id = comment.BlogID });
             }
             // Handle the case where the model state is invalid
