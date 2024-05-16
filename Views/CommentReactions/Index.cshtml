@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication6.Models.CommentReaction>
+﻿@model IEnumerable<CommentReaction>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,21 +12,22 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Comment)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReactionType)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Comment)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReactionType)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Comment.CommentText)
@@ -43,6 +44,6 @@
                 <a asp-action="Delete" asp-route-id="@item.CommentReactionID">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

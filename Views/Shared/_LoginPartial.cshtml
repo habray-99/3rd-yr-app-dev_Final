@@ -1,7 +1,6 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using WebApplication6.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using WebApplication6.Areas.Identity.Data
-
 @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
 
@@ -39,11 +38,11 @@
                 @* <img src="https://images.unsplash.com/photo-1714505026042-eee1eaa0b17f?q=80&w=1806&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile Picture" class="profile-picture" /> *@
                 @if (user != null && user.ProfilePicture != null)
                 {
-                    <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)" class="profile-picture" />
+                    <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)" class="profile-picture"/>
                 }
                 else
                 {
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png" class="profile-picture" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png" class="profile-picture"/>
                 }
 
             </a>

@@ -2,43 +2,38 @@ using System.Net;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace WebApplication6.Services
+namespace WebApplication6.Services;
+
+public class EmailSender : IEmailSender
 {
-    public class EmailSender : IEmailSender
+    private readonly string _fromEmail;
+    private readonly string _fromPassword;
+
+    public EmailSender(string fromEmail, string fromPassword)
     {
-        private readonly string _fromEmail;
-        private readonly string _fromPassword;
+        _fromEmail = fromEmail;
+        _fromPassword = fromPassword;
+    }
 
-        public EmailSender(string fromEmail, string fromPassword)
+    public async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
+    {
+        var message = new MailMessage();
+        message.From = new MailAddress(_fromEmail);
+        message.Subject = subject;
+        if (toEmail == "admin@admin.com")
+            message.To.Add(new MailAddress("vamsha.tamu.a21.2@icp.edu.np"));
+        else
+            message.To.Add(new MailAddress(toEmail));
+        message.Body = htmlMessage;
+        message.IsBodyHtml = true;
+
+        var smtpClient = new SmtpClient("smtp.gmail.com")
         {
-            _fromEmail = fromEmail;
-            _fromPassword = fromPassword;
-        }
+            Port = 587,
+            Credentials = new NetworkCredential(_fromEmail, _fromPassword),
+            EnableSsl = true
+        };
 
-        public async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
-        {
-            MailMessage message = new MailMessage();
-            message.From = new MailAddress(_fromEmail);
-            message.Subject = subject;
-            if (toEmail == "admin@admin.com")
-            {
-                message.To.Add(new MailAddress("vamsha.tamu.a21.2@icp.edu.np"));
-            }
-            else
-            {
-                message.To.Add(new MailAddress(toEmail));
-            }
-            message.Body = htmlMessage;
-            message.IsBodyHtml = true;
-
-            var smtpClient = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(_fromEmail, _fromPassword),
-                EnableSsl = true,
-            };
-
-            await smtpClient.SendMailAsync(message);
-        }
+        await smtpClient.SendMailAsync(message);
     }
 }

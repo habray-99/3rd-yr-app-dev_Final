@@ -1,4 +1,7 @@
-﻿@* @inject SignInManager<CustomUser> SignInManager
+﻿@using Microsoft.IdentityModel.Tokens
+@using WebApplication6.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@* @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
 @inject IdentityDBContext _context
 @using Microsoft.AspNetCore.Identity        
@@ -57,11 +60,8 @@
 @inject SignInManager<CustomUser> SignInManager
 @inject UserManager<CustomUser> UserManager
 @inject IdentityDBContext _context
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.IdentityModel.Tokens
-@using WebApplication6.Areas.Identity.Data
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous"/>
 
 <style>
     .notification-dropdown {
@@ -113,7 +113,7 @@
             if (currentUser != null)
             {
                 var unreadNotifications = _context.Notifications
-                .Count(n => n.UserID == currentUser.Id && !n.IsSeen);
+                    .Count(n => n.UserID == currentUser.Id && !n.IsSeen);
 
                 <span class="notification-badge">@unreadNotifications</span>
             }
@@ -123,9 +123,9 @@
         @if (currentUser != null)
         {
             var notifications = _context.Notifications
-            .Where(n => n.UserID == currentUser.Id)
-            .OrderByDescending(n => n.CreatedDate)
-            .ToList();
+                .Where(n => n.UserID == currentUser.Id)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToList();
             @if (notifications.IsNullOrEmpty())
             {
                 <li class="notification-item">No notifications available</li>

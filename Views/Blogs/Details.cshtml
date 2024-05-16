@@ -1,7 +1,7 @@
-﻿@model WebApplication6.Models.Blog
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Identity
+﻿@using System.Security.Claims
 @using WebApplication6.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@model Blog
 @inject UserManager<CustomUser> UserManager
 
 @{
@@ -10,8 +10,6 @@
 
     var commentReactionCounts = ViewData["CommentReactionCounts"] as Dictionary<int, (int, int)>;
     var user = await UserManager.GetUserAsync(User);
-
-
 }
 
 <head>
@@ -93,60 +91,60 @@
     </style>
 </head>
 <body>
-    <div class="container bg-white">
-        <h1>@Model.Title</h1>
-        <div class="d-flex flex-row align-items-center mb-3 mt-5">
-            <div class="profile-circle1 mb-2">
-                @* <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image"> *@
+<div class="container bg-white">
+    <h1>@Model.Title</h1>
+    <div class="d-flex flex-row align-items-center mb-3 mt-5">
+        <div class="profile-circle1 mb-2">
+            @* <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image"> *@
 
-                @if (Model.User?.ProfilePicture != null)
-                {
-                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.User.ProfilePicture)" />
-                }
-                
-               
-            </div>
-            <div class="d-flex flex-column">
-                <h4 class="text" style="font-weight:bold">@Model.User.UserName</h4>
-                <h5 class="text-muted">@Model.CreatedDate</h5>
-            </div>
-        </div>
-        <div class="dropdown-divider"></div>
-        <br />
-        @if (Model.BlogPicture != null && Model.BlogPicture.Length > 0)
-        {
-            <img src="data:image/png;base64,@Convert.ToBase64String(Model.BlogPicture)" style="width:100%; height:400px; object-fit:contain" />
-        }
-        else
-        {
-            <p>No profile picture available</p>
-        }
-        <p>
-            @Model.Body
-        </p>
-
-        @if (user != null)
-        {
-            if (Model.User?.UserName == user.UserName || user.Role == "Admin")
+            @if (Model.User?.ProfilePicture != null)
             {
-                <div class="d-flex flex-row ">
-                    <div class="btn btn-primary me-3 p-1">
-                        <a asp-action="Edit" asp-route-id="@Model?.BlogID">Edit</a>
-                    </div>
-                    <div class="btn btn-danger me-3 p-1">
-                        <a asp-action="Delete" asp-route-id="@Model?.BlogID">Delete</a>
-                    </div>
-
-                    <a asp-action="Index">Back to List</a>
-                </div>
+                <img src="data:image/png;base64,@Convert.ToBase64String(Model.User.ProfilePicture)"/>
             }
+
+
+        </div>
+        <div class="d-flex flex-column">
+            <h4 class="text" style="font-weight:bold">@Model.User.UserName</h4>
+            <h5 class="text-muted">@Model.CreatedDate</h5>
+        </div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <br/>
+    @if (Model.BlogPicture != null && Model.BlogPicture.Length > 0)
+    {
+        <img src="data:image/png;base64,@Convert.ToBase64String(Model.BlogPicture)" style="width:100%; height:400px; object-fit:contain"/>
+    }
+    else
+    {
+        <p>No profile picture available</p>
+    }
+    <p>
+        @Model.Body
+    </p>
+
+    @if (user != null)
+    {
+        if (Model.User?.UserName == user.UserName || user.Role == "Admin")
+        {
+            <div class="d-flex flex-row ">
+                <div class="btn btn-primary me-3 p-1">
+                    <a asp-action="Edit" asp-route-id="@Model?.BlogID">Edit</a>
+                </div>
+                <div class="btn btn-danger me-3 p-1">
+                    <a asp-action="Delete" asp-route-id="@Model?.BlogID">Delete</a>
+                </div>
+
+                <a asp-action="Index">Back to List</a>
+            </div>
         }
-       @*  else
+    }
+    @*  else
         {
             
         } *@
 
-        @* @if (Model.User?.UserName == user.UserName || user.Role == "Admin")
+    @* @if (Model.User?.UserName == user.UserName || user.Role == "Admin")
         {
             <div class="d-flex flex-row ">
                 <div class="btn btn-primary me-3 p-1">
@@ -159,134 +157,133 @@
                 <a asp-action="Index">Back to List</a>
             </div>
         } *@
-       @*  else
+    @*  else
         {
             <p>Not available please login</p>
         } *@
+    <div class="dropdown-divider"></div>
+    <br/>
+    <div class="col-md-6 mb-3" style="width:100%;">
+        <div class="card-header col bg-success">
+            <h3>
+                Add Comment
+            </h3>
+        </div>
+        <br/>
+        <div class="d-flex flex-row align-items-center mb-3 ms-1">
 
-        <div class="dropdown-divider"></div>
-        <br />
-        <div class="col-md-6 mb-3" style="width:100%;">
-            <div class="card-header col bg-success">
-                <h3>
-                    Add Comment
-                </h3>
-            </div>
-            <br />
-            <div class="d-flex flex-row align-items-center mb-3 ms-1">
-
-                <div class="profile-circle mb-2">
-                    @* <img src="https://t4.ftcdn.net/jpg/03/98/85/77/360_F_398857704_n44BPhqM68Xk9vT31BeFkLQwWsgeZS6C.jpg" alt="User Profile Image"> *@
-                    @if (user != null && user.ProfilePicture != null)
-                    {
-                        <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)"  />
-                    }
-                    else
-                    {
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png" />
-                    }
-                </div>
-
-                <div class="comment-box" style="width:100%">
-                    <form asp-controller="Comments" asp-action="CreateComment" method="post">
-                        <input type="hidden" name="BlogID" value="@Model.BlogID" />
-                        @* <input type="hidden" name="UserID" value="@ViewBag.CurrentUserId" /> <!-- Replace with the current user's ID --> *@
-                        <input type="hidden" name="UserID" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
-
-                        <div class="form-group">
-                            <label for="CommentText">Comment:</label>
-                            <textarea class="form-control" name="CommentText" placeholder="Write your comment here" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit Comment</button>
-                    </form>
-                </div>
-
-            </div>
-            <h4>Comments</h4>
-            
-
-            @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
-            {
-                @foreach (var comment in ViewBag.Comments)
+            <div class="profile-circle mb-2">
+                @* <img src="https://t4.ftcdn.net/jpg/03/98/85/77/360_F_398857704_n44BPhqM68Xk9vT31BeFkLQwWsgeZS6C.jpg" alt="User Profile Image"> *@
+                @if (user != null && user.ProfilePicture != null)
                 {
-                    var commenterProfilePicture = comment.User?.ProfilePicture;
-                    var commenterName = comment.User?.UserName;
+                    <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)"/>
+                }
+                else
+                {
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png"/>
+                }
+            </div>
 
-                    var upvotes = 0;
-                    var downvotes = 0;
-                    var userReaction = 0; // 0 = no reaction, 1 = upvote, 2 = downvote
+            <div class="comment-box" style="width:100%">
+                <form asp-controller="Comments" asp-action="CreateComment" method="post">
+                    <input type="hidden" name="BlogID" value="@Model.BlogID"/>
+                    @* <input type="hidden" name="UserID" value="@ViewBag.CurrentUserId" /> <!-- Replace with the current user's ID --> *@
+                    <input type="hidden" name="UserID" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
 
-                    if (commentReactionCounts != null && commentReactionCounts.ContainsKey(comment.CommentID))
-                    {
-                        upvotes = commentReactionCounts[comment.CommentID].Item1;
-                        downvotes = commentReactionCounts[comment.CommentID].Item2;
-                    }
+                    <div class="form-group">
+                        <label for="CommentText">Comment:</label>
+                        <textarea class="form-control" name="CommentText" placeholder="Write your comment here" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </form>
+            </div>
 
-                    if (ViewBag.UserReactions != null)
-                    {
-                        var userCommentReaction = ((List<WebApplication6.Models.CommentReaction>)ViewBag.UserReactions)
+        </div>
+        <h4>Comments</h4>
+
+
+        @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
+        {
+            @foreach (var comment in ViewBag.Comments)
+            {
+                var commenterProfilePicture = comment.User?.ProfilePicture;
+                var commenterName = comment.User?.UserName;
+
+                var upvotes = 0;
+                var downvotes = 0;
+                var userReaction = 0; // 0 = no reaction, 1 = upvote, 2 = downvote
+
+                if (commentReactionCounts != null && commentReactionCounts.ContainsKey(comment.CommentID))
+                {
+                    upvotes = commentReactionCounts[comment.CommentID].Item1;
+                    downvotes = commentReactionCounts[comment.CommentID].Item2;
+                }
+
+                if (ViewBag.UserReactions != null)
+                {
+                    var userCommentReaction = ((List<CommentReaction>)ViewBag.UserReactions)
                         .FirstOrDefault(r => r.CommentID == comment.CommentID)?.ReactionTypeID;
 
-                        if (userCommentReaction.HasValue)
-                        {
-                            userReaction = userCommentReaction.Value;
-                        }
+                    if (userCommentReaction.HasValue)
+                    {
+                        userReaction = userCommentReaction.Value;
                     }
+                }
 
-                    <div class="ms-2 mt-4">
-                        <div class="dropdown-divider"></div>
-                        <div class="d-flex flex-row mb-3 mt-3">
-                            <div class="profile-circle mb-2">
-                                @* <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image"> *@
-                                @if (commenterProfilePicture != null)
-                                {
-                                    <img src="data:image/png;base64,@Convert.ToBase64String(commenterProfilePicture)" />
-                                }
-                                @* @if (user != null && user.ProfilePicture != null)
+                <div class="ms-2 mt-4">
+                    <div class="dropdown-divider"></div>
+                    <div class="d-flex flex-row mb-3 mt-3">
+                        <div class="profile-circle mb-2">
+                            @* <img src="https://hips.hearstapps.com/hmg-prod/images/street-portrait-of-a-young-man-using-mobile-phone-royalty-free-image-1018047498-1564431457.jpg?crop=0.668xw:1.00xh;0.226xw,0&resize=640:*" alt="User Profile Image"> *@
+                            @if (commenterProfilePicture != null)
+                            {
+                                <img src="data:image/png;base64,@Convert.ToBase64String(commenterProfilePicture)"/>
+                            }
+                            @* @if (user != null && user.ProfilePicture != null)
                                 {
                                     <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)" />
                                 } *@
-                            </div>
-                            <div class="d-flex flex-column ms-3">
-                                <small class="text" style="font-weight:bold">@commenterName</small>
-                                <small class="text mb-2" style="color:grey">@comment.CreatedDate</small>
-                                <small class="text">@comment.CommentText</small>
+                        </div>
+                        <div class="d-flex flex-column ms-3">
+                            <small class="text" style="font-weight:bold">@commenterName</small>
+                            <small class="text mb-2" style="color:grey">@comment.CreatedDate</small>
+                            <small class="text">@comment.CommentText</small>
 
-                                <form asp-controller="CommentReactions" asp-action="CreateCommentReaction" method="post">
-                                    <input type="hidden" name="CommentID" value="@comment.CommentID" />
-                                    <input type="hidden" name="UserID" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+                            <form asp-controller="CommentReactions" asp-action="CreateCommentReaction" method="post">
+                                <input type="hidden" name="CommentID" value="@comment.CommentID"/>
+                                <input type="hidden" name="UserID" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
 
-                                    <div class="vote-icons d-flex flex-row">
-                                        <button type="submit" class="btn btn-link" name="ReactionTypeID" value="1">
-                                            <i class="fa-solid fa-circle-arrow-up @(userReaction == 1 ? "text-primary" : "")"></i>
-                                            <span>@upvotes</span>
-                                        </button>
-                                        <button type="submit" class="btn btn-link" name="ReactionTypeID" value="2">
-                                            <i class="fa-solid fa-circle-arrow-down @(userReaction == 2 ? "text-danger" : "")"></i>
-                                            <span>@downvotes</span>
-                                        </button>
+                                <div class="vote-icons d-flex flex-row">
+                                    <button type="submit" class="btn btn-link" name="ReactionTypeID" value="1">
+                                        <i class="fa-solid fa-circle-arrow-up @(userReaction == 1 ? "text-primary" : "")"></i>
+                                        <span>@upvotes</span>
+                                    </button>
+                                    <button type="submit" class="btn btn-link" name="ReactionTypeID" value="2">
+                                        <i class="fa-solid fa-circle-arrow-down @(userReaction == 2 ? "text-danger" : "")"></i>
+                                        <span>@downvotes</span>
+                                    </button>
+                                </div>
+                            </form>
+
+                            @if (comment.User?.UserName == user.UserName || user.Role == "Admin" || comment.Blog.User.UserName == user.UserName)
+                            {
+                                <div class="d-flex flex-row me-2">
+                                    <div class="Edit me-3 ms-3">
+                                        <a asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.CommentID">Edit</a>
                                     </div>
-                                </form>
-
-                                @if (comment.User?.UserName == user.UserName || user.Role == "Admin" || comment.Blog.User.UserName == user.UserName)
-                                {
-                                    <div class="d-flex flex-row me-2">
-                                        <div class="Edit me-3 ms-3">
-                                            <a asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.CommentID">Edit</a>
-                                        </div>
-                                        <div class="Delete">
-                                            <a asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentID">Delete</a>
-                                        </div>
+                                    <div class="Delete">
+                                        <a asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentID">Delete</a>
                                     </div>
-                                }
+                                </div>
+                            }
 
-                                
-                            </div>
+
                         </div>
                     </div>
-                }
+                </div>
             }
+        }
 
-        </div>
     </div>
+</div>
 </body>

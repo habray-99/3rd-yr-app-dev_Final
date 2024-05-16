@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication6.Areas.Identity.Data;
 using WebApplication6.Models;
 
@@ -7,8 +7,8 @@ namespace WebApplication6.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly IdentityDBContext _context;
+    private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger, IdentityDBContext context)
     {
@@ -23,24 +23,30 @@ public class HomeController : Controller
         var downvoteCount = _context.Reactions.Count(r => r.ReactionTypeID == 2);
         var commentCount = _context.Comments.Count();
 
-        var topBlogPosts = (month.HasValue || year.HasValue)
-            ? _context.Blogs.OrderByDescending(b => 2 * b.Reactions.Count(r => r.ReactionTypeID == 1) - b.Reactions.Count(r => r.ReactionTypeID == 2) + b.Comments.Count)
+        var topBlogPosts = month.HasValue || year.HasValue
+            ? _context.Blogs.OrderByDescending(b =>
+                    2 * b.Reactions.Count(r => r.ReactionTypeID == 1) - b.Reactions.Count(r => r.ReactionTypeID == 2) +
+                    b.Comments.Count)
                 .Where(b => (!month.HasValue || b.CreatedDate.Month == month) &&
                             (!year.HasValue || b.CreatedDate.Year == year))
                 .Take(10)
                 .ToList()
-            : _context.Blogs.OrderByDescending(b => 2 * b.Reactions.Count(r => r.ReactionTypeID == 1) - b.Reactions.Count(r => r.ReactionTypeID == 2) + b.Comments.Count)
+            : _context.Blogs.OrderByDescending(b =>
+                    2 * b.Reactions.Count(r => r.ReactionTypeID == 1) - b.Reactions.Count(r => r.ReactionTypeID == 2) +
+                    b.Comments.Count)
                 .Take(10)
                 .ToList();
 
-        var topBloggers = (month.HasValue || year.HasValue)
-            ? _context.Users.OrderByDescending(u => u.Blogs.Count + u.Comments.Count + u.Reactions.Count(r => r.ReactionTypeID == 1))
+        var topBloggers = month.HasValue || year.HasValue
+            ? _context.Users.OrderByDescending(u =>
+                    u.Blogs.Count + u.Comments.Count + u.Reactions.Count(r => r.ReactionTypeID == 1))
                 .Where(u => u.Blogs.Any(b =>
                     (!month.HasValue || b.CreatedDate.Month == month) &&
                     (!year.HasValue || b.CreatedDate.Year == year)))
                 .Take(10)
                 .ToList()
-            : _context.Users.OrderByDescending(u => u.Blogs.Count + u.Comments.Count + u.Reactions.Count(r => r.ReactionTypeID == 1))
+            : _context.Users.OrderByDescending(u =>
+                    u.Blogs.Count + u.Comments.Count + u.Reactions.Count(r => r.ReactionTypeID == 1))
                 .Take(10)
                 .ToList();
 

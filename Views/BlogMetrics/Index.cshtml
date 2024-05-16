@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication6.Models.BlogMetric>
+﻿@model IEnumerable<BlogMetric>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,24 +12,25 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalUpvotes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalDownvotes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalComments)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Blog)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalUpvotes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalDownvotes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalComments)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Blog)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.TotalUpvotes)
@@ -49,6 +50,6 @@
                 <a asp-action="Delete" asp-route-id="@item.BlogMetricID">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

@@ -5,179 +5,158 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication6.Areas.Identity.Data;
 
-namespace WebApplication6.Controllers
+namespace WebApplication6.Controllers;
+
+[Authorize(Roles = "Admin")]
+public class UsersController : Controller
 {
-    [Authorize(Roles = "Admin")]
-    public class UsersController : Controller
+    private readonly IdentityDBContext _context;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly UserManager<CustomUser> _userManager;
+
+    public UsersController(IdentityDBContext context, UserManager<CustomUser> userManager,
+        RoleManager<IdentityRole> roleManager)
     {
-        private readonly IdentityDBContext _context;
-        private readonly UserManager<CustomUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        _context = context;
+        _userManager = userManager;
+        _roleManager = roleManager;
+    }
 
-        public UsersController(IdentityDBContext context, UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager)
+    // GET: Users
+    //public async Task<IActionResult> Index()
+    //{
+    //    var users = await _context.Users.ToListAsync();
+    //    return View(users);
+    //}
+    public async Task<IActionResult> Index(string searchQuery)
+    {
+        var users = from u in _context.Users
+            select u;
+
+        if (!string.IsNullOrEmpty(searchQuery))
+            users = users.Where(u => u.UserName.Contains(searchQuery) ||
+                                     u.Email.Contains(searchQuery) ||
+                                     u.PhoneNumber.Contains(searchQuery) ||
+                                     u.Address.Contains(searchQuery));
+
+        var results = await users.ToListAsync();
+
+        return View(results);
+    }
+
+
+    // GET: Users/Details/5
+    public async Task<IActionResult> Details(string id)
+    {
+        if (id == null) return NotFound();
+
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == id);
+        if (user == null) return NotFound();
+
+        return View(user);
+    }
+
+    // GET: Users/Create
+    public async Task<IActionResult> Create()
+    {
+        ViewData["RolesList"] = new SelectList(await _roleManager.Roles.ToListAsync(), "Name", "Name");
+        return View();
+    }
+
+    // POST: Users/Create
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(
+        [Bind(
+            "Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,Role,Address,ProfilePicture,Blogs,Comments,Reactions,Notifications,CommentReactions,BlogMetrics,UserMetrics")]
+        CustomUser user)
+    {
+        if (ModelState.IsValid)
         {
-            _context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
-        }
-
-        // GET: Users
-        //public async Task<IActionResult> Index()
-        //{
-        //    var users = await _context.Users.ToListAsync();
-        //    return View(users);
-        //}
-        public async Task<IActionResult> Index(string searchQuery)
-        {
-            var users = from u in _context.Users
-                        select u;
-
-            if (!String.IsNullOrEmpty(searchQuery))
-            {
-                users = users.Where(u => u.UserName.Contains(searchQuery) ||
-                                         u.Email.Contains(searchQuery) ||
-                                         u.PhoneNumber.Contains(searchQuery) ||
-                                         u.Address.Contains(searchQuery));
-            }
-
-            var results = await users.ToListAsync();
-
-            return View(results);
-        }
-
-
-        // GET: Users/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users
-               .FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
-        // GET: Users/Create
-        public async Task<IActionResult> Create()
-        {
-            ViewData["RolesList"] = new SelectList(await _roleManager.Roles.ToListAsync(), "Name", "Name");
-            return View();
-        }
-
-        // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,Role,Address,ProfilePicture,Blogs,Comments,Reactions,Notifications,CommentReactions,BlogMetrics,UserMetrics")] CustomUser user)
-        {
-            if (ModelState.IsValid)
-            {
-                var passwordHasher = new PasswordHasher<CustomUser>();
-                user.PasswordHash = passwordHasher.HashPassword(user, user.PasswordHash);
-                user.UserName = user.Email;
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                await _userManager.AddToRoleAsync(user, user.Role);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
-        // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return View(user);
-        }
-
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,Role,Address,ProfilePicture,Blogs,Comments,Reactions,Notifications,CommentReactions,BlogMetrics,UserMetrics")] CustomUser user)
-        {
-            if (id != user.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users
-               .FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-            }
-
+            var passwordHasher = new PasswordHasher<CustomUser>();
+            user.PasswordHash = passwordHasher.HashPassword(user, user.PasswordHash);
+            user.UserName = user.Email;
+            _context.Add(user);
             await _context.SaveChangesAsync();
+            await _userManager.AddToRoleAsync(user, user.Role);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(string id)
+        return View(user);
+    }
+
+    // GET: Users/Edit/5
+    public async Task<IActionResult> Edit(string id)
+    {
+        if (id == null) return NotFound();
+
+        var user = await _context.Users.FindAsync(id);
+        if (user == null) return NotFound();
+        return View(user);
+    }
+
+    // POST: Users/Edit/5
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(string id,
+        [Bind(
+            "Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,Role,Address,ProfilePicture,Blogs,Comments,Reactions,Notifications,CommentReactions,BlogMetrics,UserMetrics")]
+        CustomUser user)
+    {
+        if (id != user.Id) return NotFound();
+
+        if (ModelState.IsValid)
         {
-            return _context.Users.Any(e => e.Id == id);
+            try
+            {
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(user.Id))
+                    return NotFound();
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
+
+        return View(user);
+    }
+
+    // GET: Users/Delete/5
+    public async Task<IActionResult> Delete(string id)
+    {
+        if (id == null) return NotFound();
+
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == id);
+        if (user == null) return NotFound();
+
+        return View(user);
+    }
+
+    // POST: Users/Delete/5
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(string id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user != null) _context.Users.Remove(user);
+
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+
+    private bool UserExists(string id)
+    {
+        return _context.Users.Any(e => e.Id == id);
     }
 }

@@ -4,23 +4,31 @@ using WebApplication6.Models;
 
 namespace WebApplication6.Areas.Identity.Data;
 
-
 public class IdentityDBContext : IdentityDbContext<CustomUser>
 {
     public IdentityDBContext(DbContextOptions<IdentityDBContext> options)
         : base(options)
     {
     }
+
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<CommentReaction> CommentReactions { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Reaction> Reactions { get; set; }
+
     public DbSet<ReactionType> ReactionTypes { get; set; }
+
     //public DbSet<CustomUser> User { get; set; }
     public DbSet<CustomUser> Users { get; set; } = default;
     public DbSet<BlogMetric> BlogMetrics { get; set; }
     public DbSet<UserMetric> UserMetrics { get; set; }
+
+    public DbSet<User> User { get; set; } = default!;
+
+    public DbSet<BlogMetric> BlogMetric { get; set; } = default!;
+
+    public DbSet<UserMetric> UserMetric { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -118,12 +126,6 @@ public class IdentityDBContext : IdentityDbContext<CustomUser>
         //    new ReactionType { ReactionTypeID = 2, ReactionName = "Down vote" }
         //);
     }
-
-    public DbSet<WebApplication6.Models.User> User { get; set; } = default!;
-
-    public DbSet<WebApplication6.Models.BlogMetric> BlogMetric { get; set; } = default!;
-
-    public DbSet<WebApplication6.Models.UserMetric> UserMetric { get; set; } = default!;
 
     //public DbSet<User> User { get; set; } = default!;
 }

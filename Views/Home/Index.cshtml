@@ -1,6 +1,5 @@
-﻿@using System.Globalization
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Globalization
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -14,7 +13,7 @@
                 <label for="month" class="font-weight-bold">Filter by Month:</label>
                 <select id="month" name="month" class="form-control">
                     <option value="">All Time</option>
-                    @for (int i = 1; i <= 12; i++)
+                    @for (var i = 1; i <= 12; i++)
                     {
                         <option value="@i">@DateTimeFormatInfo.CurrentInfo.GetMonthName(i)</option>
                     }
@@ -24,7 +23,7 @@
                 <label for="year" class="font-weight-bold">Filter by Year:</label>
                 <select id="year" name="year" class="form-control">
                     <option value="">All Time</option>
-                    @for (int i = DateTime.Now.Year; i >= DateTime.Now.Year - 10; i--)
+                    @for (var i = DateTime.Now.Year; i >= DateTime.Now.Year - 10; i--)
                     {
                         <option value="@i">@i</option>
                     }
@@ -40,10 +39,18 @@
                         <h5 class="mb-0">Cumulative Counts</h5>
                     </div>
                     <div class="card-body">
-                        <p><span class="font-weight-bold">Blog Posts:</span> @Model.BlogCount</p>
-                        <p><span class="font-weight-bold">Upvotes:</span> @Model.UpvoteCount</p>
-                        <p><span class="font-weight-bold">Downvotes:</span> @Model.DownvoteCount</p>
-                        <p><span class="font-weight-bold">Comments:</span> @Model.CommentCount</p>
+                        <p>
+                            <span class="font-weight-bold">Blog Posts:</span> @Model.BlogCount
+                        </p>
+                        <p>
+                            <span class="font-weight-bold">Upvotes:</span> @Model.UpvoteCount
+                        </p>
+                        <p>
+                            <span class="font-weight-bold">Downvotes:</span> @Model.DownvoteCount
+                        </p>
+                        <p>
+                            <span class="font-weight-bold">Comments:</span> @Model.CommentCount
+                        </p>
                     </div>
                 </div>
             </div>
@@ -72,7 +79,7 @@
                 <ul class="list-group">
                     @foreach (var post in Model.TopBlogPosts)
                     {
-                        <li class="list-group-item" onclick="window.location.href='@Url.Action("Details", "Blogs", new { id = @post.BlogID })';">
+                        <li class="list-group-item" onclick="window.location.href='@Url.Action("Details", "Blogs", new { id = post.BlogID })';">
                             @post.Title
                         </li>
                     }

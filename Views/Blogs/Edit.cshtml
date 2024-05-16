@@ -1,32 +1,31 @@
-﻿@model WebApplication6.Models.Blog
+﻿@model Blog
 
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
-
 }
 
 <h1>Edit</h1>
 
 <h4>Blog</h4>
-<hr />
+<hr/>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="BlogID" />
-            <input type="hidden" asp-for="CreatedDate" />
+            <input type="hidden" asp-for="BlogID"/>
+            <input type="hidden" asp-for="CreatedDate"/>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
+                <input asp-for="Title" class="form-control"/>
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Body" class="control-label"></label>
-                <input asp-for="Body" class="form-control" />
+                <input asp-for="Body" class="form-control"/>
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div>
-            
+
             <div class="form-group">
                 <label asp-for="UserID" class="control-label"></label>
                 <select asp-for="UserID" class="form-control" asp-items="ViewBag.UserID"></select>
@@ -42,11 +41,13 @@
                 <label for="BlogPictureUpload" class="control-label">Profile Picture</label>
                 @if (Model.BlogPicture != null && Model.BlogPicture.Length > 0)
                 {
-                    <input type="file" name="BlogPictureUpload" value="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.BlogPicture))" class="form-control" />
-                }else{
-                    <input type="file" name="BlogPictureUpload" class="form-control" />
+                    <input type="file" name="BlogPictureUpload" value="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.BlogPicture))" class="form-control"/>
                 }
-                
+                else
+                {
+                    <input type="file" name="BlogPictureUpload" class="form-control"/>
+                }
+
             </div>
 
             @* <div class="form-group">
@@ -69,9 +70,8 @@
             </div> *@
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary"/>
             </div>
-
 
 
         </form>
@@ -83,5 +83,5 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

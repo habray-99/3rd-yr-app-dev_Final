@@ -1,4 +1,4 @@
-﻿@model WebApplication6.Models.UserMetric
+﻿@model UserMetric
 
 @{
     ViewData["Title"] = "Create";
@@ -8,37 +8,37 @@
 <h1>Create</h1>
 
 <h4>UserMetric</h4>
-<hr />
+<hr/>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="UserID" class="control-label"></label>
-                <select asp-for="UserID" class ="form-control" asp-items="ViewBag.UserID"></select>
+                <select asp-for="UserID" class="form-control" asp-items="ViewBag.UserID"></select>
             </div>
             <div class="form-group">
                 <label asp-for="TotalBlogPosts" class="control-label"></label>
-                <input asp-for="TotalBlogPosts" class="form-control" />
+                <input asp-for="TotalBlogPosts" class="form-control"/>
                 <span asp-validation-for="TotalBlogPosts" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TotalUpvotes" class="control-label"></label>
-                <input asp-for="TotalUpvotes" class="form-control" />
+                <input asp-for="TotalUpvotes" class="form-control"/>
                 <span asp-validation-for="TotalUpvotes" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TotalDownvotes" class="control-label"></label>
-                <input asp-for="TotalDownvotes" class="form-control" />
+                <input asp-for="TotalDownvotes" class="form-control"/>
                 <span asp-validation-for="TotalDownvotes" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TotalComments" class="control-label"></label>
-                <input asp-for="TotalComments" class="form-control" />
+                <input asp-for="TotalComments" class="form-control"/>
                 <span asp-validation-for="TotalComments" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary"/>
             </div>
         </form>
     </div>
@@ -49,5 +49,5 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

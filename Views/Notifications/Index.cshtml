@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication6.Models.Notification>
+﻿@model IEnumerable<Notification>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,24 +12,25 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NotificationType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EntityID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NotificationType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EntityID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.NotificationType)
@@ -49,6 +50,6 @@
                 <a asp-action="Delete" asp-route-id="@item.NotificationID">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

@@ -47,14 +47,14 @@ public class Program
             });
 
         builder.Services.AddTransient<IEmailSender, EmailSender>(serviceProvider =>
-    {
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        //var fromEmail = configuration.GetValue<string>("EmailSettings:FromEmail");
-        //var fromPassword = configuration.GetValue<string>("EmailSettings:FromPassword");
-        var fromEmail = config["EmailSettings:FromEmail"];
-        var fromPassword = config["EmailSettings:FromPassword"];
-        return new EmailSender(fromEmail, fromPassword);
-    });
+        {
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            //var fromEmail = configuration.GetValue<string>("EmailSettings:FromEmail");
+            //var fromPassword = configuration.GetValue<string>("EmailSettings:FromPassword");
+            var fromEmail = config["EmailSettings:FromEmail"];
+            var fromPassword = config["EmailSettings:FromPassword"];
+            return new EmailSender(fromEmail, fromPassword);
+        });
 
         var app = builder.Build();
 
@@ -109,12 +109,13 @@ public class Program
                         Console.WriteLine($"Failed to create role {role}: {ex.Message}");
                     }
         }
+
         using (var scope = app.Services.CreateScope())
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
 
-            string email = "admin@admin.com";
-            string password = "Test@1234";
+            var email = "admin@admin.com";
+            var password = "Test@1234";
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
@@ -125,19 +126,14 @@ public class Program
                 user.Role = "Admin";
                 var result = await userManager.CreateAsync(user, password);
                 if (result.Succeeded)
-                {
                     await userManager.AddToRoleAsync(user, "Admin");
-                }
                 else
-                {
                     foreach (var error in result.Errors)
-                    {
                         // Log or handle each error
                         Console.WriteLine(error.Description);
-                    }
-                }
             }
         }
+
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDBContext>();
